@@ -1,0 +1,468 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw15380
+\paperh9640
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	NISTSound\
+	\
+		
+\b0\fs28 INHERITS FROM			ProcessedSound
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			NISTSound.h\
+\
+		CLASS DESCRIPTION\
+		\
+		This object is a subclass of the processedSound object. It provides additional processing of NIST\
+		.wav files.\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from ProcessedSound
+\i0 	id	digitalFilter;\
+						id	soundWindow;\
+						id	speechProcessor;\
+						int	inputSoundType;\
+						int	numberBytes;\
+						int	numberSoundSamples;\
+						int	numberPRCFrames;\
+						int	subvectorCount[];\
+						int	subvectorMin[];\
+						int	subvectorMax[];\
+						int	selectionStart;\
+						int	selectionLength;\
+						int	featureVectorLength;\
+						int	minPRC[], maxPRC[];\
+						float	minVector[],maxVector[];\
+						float	preemphasisCoefficient;\
+						char	*rawSoundData;\
+						char	*charFeatureVectors;\
+						int	*intFeatureVectors;\
+						float	*floatFeatureVectors;\
+						float	*soundData;\
+						BOOL	floatVectorsNeeded;\
+						double	outputSamplingRate;\
+						double	subvectorScale[];\
+						double	subVectorOffset[];\
+						double	intScaleFactor;\
+						struct header_t	*nistHeader;\
+						char	*utteranceId;\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in NISTSound	
+\i0 	
+\fc1\cf1 id	phonemeMap;\
+						id	convertedSound;\
+						int	filterType;\
+						int	numberPoles;\
+						int	outputSamplingType;\
+						int	numberPhonemes;\
+						int	phonemeStartSamples[]\
+						int	phonemeMiddleSamples[]\
+						int	phonemeEndSamples[]\
+						char	phonemeList[][]\
+						float	offset;\
+						BOOL	phonemeLabelsAvailable;\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+	\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			
+\fc1\cf1 phonemeMap			converts phonemes to integers for TIMIT files\
+			convertedSound		sound converted from .wav file to NeXT compatible\
+			filterType			the type of low pass filter for resampling sound\
+			numberPoles			# of poles in low pass filter\
+			outputSamplingType		type of resampling to be done on .wav file\
+			numberPhonemes		# of phonemes in a TIMIT file\
+			phonemeStartSamples		location of starting points of phonemes in a TIMIT file\
+			phonemeMiddleSamples	location of midpoints of phonemes in a TIMIT file\
+			phonemeEndSamples		location of ending points of phonemes in a TIMIT file\
+			phonemeList			list of phoneme names in a TIMIT file\
+			offset			low pass filter offset from cutoff frequency\
+			phonemeLabelsAvailable	YES for a TIMIT file, no for TI digits\
+\
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- initWithSoundWindow:\
+\
+\
+		Setting parameters			- setFilterType:\
+						- setNumberPoles:\
+						- setOutputSamplingType:\
+						- setOffset: \
+\
+		Reading/Saving Files		- readWaveFile:\
+						- saveSndFile:\
+\
+		Interfacing to NIST header		- NISTdataFormat\
+						- NISTdataSize\
+						- NISTsamplingRate\
+						- NISTchannelCount\
+						- NISTinfoSize\
+						- NISTnumberSamples\
+						- NISTsoundInfo\
+						- NISTsampleMin\
+						- NISTsampleMax\
+\
+		Getting Info from the Converted Sound	- convertInfoSize\
+						- convertSoundInfo:\
+						- soundSampleMin\
+						- soundSampleMax\
+\
+		Speech Processing			- convertSound\
+						- playConvertedSound\
+						- findEndpoints\
+						- swapBytes:::\
+						- convert:length:format:fromFloat:\
+						- dataWidth:\
+\
+\
+	INSTANCE METHODS\
+\
+	
+\b convertInfoSize
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- (int)
+\b convertInfoSize
+\b0 \
+\
+		Returns the size of the information field used to store NIST information in the converted sound header.\
+		This is a local method, and should not be called directly.\
+\
+\
+	
+\b convertSoundInfo:\
+		- 
+\b0 (char *)
+\b convertSoundInfo:
+\b0 (float)
+\i sampleFreq
+\i0 \
+\
+		Stores the NIST information into a character array for loading into the converted sound header.\
+		Also adds: input_sample_rate, output_sample_rate, filterType, offset, filter order.  This is a local\
+		method, and should not be called directly.\
+\
+\
+	
+\b convert:length:format:fromFloat:\
+		- convert:
+\b0 (UCHAR *)
+\i data 
+\b\i0 length:
+\b0 (int)
+\i numberPoints 
+\b\i0 format:
+\b0 (int)
+\i dataFormat\
+                                                                           
+\b\i0 fromFloat:
+\b0 (float *)
+\i fdata
+\i0 \
+\
+		This a local method used for converting the resampled floating point speech data to integer format.\
+\
+\
+	
+\b convertSound
+\b0 \
+		- 
+\b convertSound
+\b0 \
+	\
+		Converts the sound read in from a .wav file to a sound file, by resampling and storing in 
+\i convertedSound
+\i0 .  This is a\
+		local method, and should not be called directly.\
+\
+\
+	
+\b dataWidth:
+\b0 \
+		- (int)
+\b dataWidth:
+\b0 (int)
+\i soundFormat
+\i0 \
+	\
+		Returns the data width associated with the input sound format.  This is a local method, and should not\
+		be called directly.\
+\
+\
+	
+\b findEndpoints
+\b0 \
+		- 
+\b findEndpoints
+\b0 \
+	\
+		Crude endpoint detector.  This method overrides the super's method.\
+\
+\
+	
+\b initWithSoundWindow:
+\b0 \
+		- 
+\b initWithSoundWindow:
+\b0 (id)
+\i newSoundWindow
+\i0 \
+	\
+		Initializes the receiver with a sound window for plotting the speech.  If the application won't be using a sound \
+		window, set 
+\i newSoundWindow 
+\i0 = nil.  This method overrides the super's method.\
+\
+\
+	
+\b NISTchannelCount
+\b0 \
+		- (int)
+\b NISTchannelCount
+\b0 \
+	\
+		Returns the number of channels used in recording the .wav file. This is a local method, and should not be called\
+		directly.\
+\
+\
+	
+\b NISTdataFormat
+\b0 \
+		- (int)
+\b NISTdataFormat
+\b0 \
+	\
+		Returns the type of format used in recording the .wav file, e.g., 16 bit linear. This is a local method, and should not\
+		be called directly.\
+\
+\
+	
+\b NISTdataSize
+\b0 \
+		- (int)
+\b NISTdataSize
+\b0 \
+	\
+		Returns the number of bytes per sample used in storing the .wav file, i.e., 8 bit, 16 bit, etc.. This is a\
+		local method, and should not be called directly.\
+\
+\
+	
+\b NISTinfoSize
+\b0 \
+		- (int)
+\b NISTinfoSize
+\b0 \
+	\
+		Returns the size of the information field for the .wav file. This is a local method, and should not be\
+		called directly.\
+\
+\
+	
+\b NISTnumberSamples
+\b0 \
+		- (int)
+\b NISTnumberSamples
+\b0 \
+	\
+		Returns the number of samples in the .wav file. This is a local method, and should not be called\
+		directly.\
+\
+\
+	
+\b NISTsampleMax
+\b0 \
+		- (int)
+\b NISTsampleMax
+\b0 \
+	\
+		Returns the peak value of all the samples in the .wav file. This is a local method, and should not be\
+		called directly.\
+\
+\
+	
+\b NISTsampleMin
+\b0 \
+		- (int)
+\b NISTsampleMin
+\b0 \
+	\
+		Returns the min value of all the samples in the .wav file. This is a local method, and should not be\
+		called directly.\
+\
+\
+	
+\b NISTsamplingRate
+\b0 \
+		- (int)
+\b NISTsamplingRate
+\b0 \
+	\
+		Returns the sampling rate of the .wav file. This is a local method, and should not be called directly.\
+\
+\
+	
+\b NISTsoundInfo
+\b0 \
+		- (char *)
+\b NISTsoundInfo
+\b0 \
+	\
+		Stores the NIST information into a character array for loading into the converted sound header.\
+		This is a local method, and should not be called directly.\
+\
+\
+	
+\b playConvertedSound
+\b0 \
+		- 
+\b playConvertedSound
+\b0 \
+	\
+		Plays the sound converted from the .wav file.  That is, the resampled sound.\
+\
+\
+	
+\b readWavFile\
+		- 
+\b0 (int)
+\b readWavFile:
+\b0  (const char *)
+\i fileName
+\i0 \
+\
+		Reads in a NIST .wav file, resamples, and stores the resampled speech in the converted sound object.  Returns\
+		SND_ERR_NONE on no errors.\
+\
+\
+	
+\b saveSndFile\
+		- 
+\b0 (int)
+\b saveSndFile:
+\b0  (const char *)
+\i fileName
+\i0 \
+\
+		Saves the converted sound to 
+\i fileName
+\i0 , returns SND_ERR_NONE on no errors.\
+\
+\
+	
+\b setFilterType:\
+		- setFilterType:
+\b0  (int)
+\i type
+\i0 \
+\
+		Sets the low pass resampling filter type.  See below for a list of types.\
+\
+\
+	
+\b setNumberPoles:\
+		- setNumberPoles:
+\b0  (int)
+\i poles
+\i0 \
+\
+		Sets the low pass resampling filter number of poles.  For an FIR filter, it sets the number of lags.\
+\
+\
+	
+\b setOffset:\
+		- setOffset:
+\b0  (float)
+\i offset
+\i0 \
+\
+		Sets the low pass resampling filter offset frequency.  The normalized cutoff frequency is then equal to \
+		
+\f1 p/(
+\f0 n - offset), where n = max(interpolation factor, decimation factor).\
+\
+\
+	
+\b setOutputSamplingType:\
+		- seOutputSamplingType:
+\b0  (int)
+\i poles
+\i0 \
+\
+		Sets the type of resampling conversion to be done.  See below for a list of types.\
+\
+\
+	
+\b soundSampleMax
+\b0 \
+		- (int)
+\b soundSampleMax
+\b0 \
+\
+		Returns the maximum sample value in the sound.\
+\
+\
+	
+\b soundSampleMin
+\b0 \
+		- (int)
+\b soundSampleMin
+\b0 \
+\
+		Returns the minimum sample value in the sound.\
+\
+	\
+	
+\b swapBytes:
+\b0 \
+		- (int) 
+\b swapBytes:
+\b0 (char *)
+\i data 
+\b\i0 :
+\b0 (int)
+\i numberBytes
+\i0 \
+\
+		This a local method for converting the NIST .wav data samples to NeXT sound format.\
+\
+
+\pard\tx2600\fi-20\li2100\fc0\cf0 \
+CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\f2\fs24 	
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\fs28\fc1\cf1 \
+
+\fs24 	#define	TRUNCATED		0		/* weight update types		*/\
+	#define	ROUNDED		1\
+	#define	MINIMUM_STEP	2		/* This is in the hardware	*/\
+	#define	STATISTICAL		3\
+	#define	INCREMENT		4\
+\
+// outputSamplingType\
+	#define 	SAMPLE_CODEC	0		/* 8012 Hz */\
+	#define 	SAMPLE_LOW		1		/* 22050 Hz  */\
+	#define 	SAMPLE_HIGH	2		/* 44100 Hz  */\
+	#define	SAMPLE_SAME	3		/* output =  input  */\
+\
+#define UCHAR       unsigned char\
+\
+// low pass filter types\
+	#define 	BUTTERWORTH	0\
+	#define 	HAMMING_SINC	1\
+\
+
+\fs28 \
+
+}

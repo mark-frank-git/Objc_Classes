@@ -1,0 +1,21 @@
+File: /User/frank/Objc_Classes/ProcessedSound
+This directory contains objects which can be used for processing speech data.  The following objects are contained in this directory:
+	
+1. NISTPhonemeMap:  An object useful for labeling phonemes from the TIMIT data 
+   base.
+
+2. NISTSound: A subclass of ProcessedSound, it adds the capability of
+   processing NIST .wav files.
+
+3. NoisySound: A subclass of NISTSound, it adds the capability of adding noise
+   to the speech prior to processing.
+
+4. ProcessedSound: An object which reads in NeXT .snd files, and processes
+   them to get cepstral coefficients, LPC analysis, etc.
+
+5. SpeechProcessor: An object which takes raw speech, and does processing to
+   obtain spectral and time domain features.  ProcessedSound has an instance
+   of SpeechProcessor in order to do its work.
+
+6. TiDigitInput: An object which facilitates the job of reading in processed
+   sound files from the TI Digit data base.

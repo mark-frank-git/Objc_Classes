@@ -1,0 +1,1051 @@
+{\rtf0\ansi{\fonttbl\f2\fnil Times-Roman;\f1\fmodern Courier;}
+\paperw15300
+\paperh10380
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f2\b\i0\ulnone\fs36\fc1\cf1 	ProcessedSound\
+	\
+		
+\b0\fs28 INHERITS FROM			Sound
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			ProcessedSound.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The ProcessedSound class is a subclass of the NeXT Sound class.  It allows processing of sound\
+		files (particularly, speech) to get spectral and time domain features of the sound.\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from Sound
+\i0 		
+\fc0\cf0 SNDSoundStruct	
+\b *soundStruct
+\b0 ;\
+						int	
+\b soundStructSize
+\b0 ;\
+						int	
+\b priority
+\b0 ;\
+						id	
+\b delegate
+\b0 ;\
+						int	
+\b status
+\b0 ;\
+						char	
+\b *name
+\b0 ;\
+
+\fc1\cf1 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in ProcessedSound
+\i0 	
+\fc1\cf1 id	digitalFilter;\
+						id	soundWindow;\
+						id	speechProcessor;\
+						int	inputSoundType;\
+						int	numberBytes;\
+						int	numberSoundSamples;\
+						int	numberPRCFrames;\
+						int	subvectorCount[];\
+						int	subvectorMin[];\
+						int	subvectorMax[];\
+						int	selectionStart;\
+						int	selectionLength;\
+						int	featureVectorLength;\
+						int	minPRC[], maxPRC[];\
+						float	minVector[],maxVector[];\
+						float	preemphasisCoefficient;\
+						char	*rawSoundData;\
+						char	*charFeatureVectors;\
+						int	*intFeatureVectors;\
+						float	*floatFeatureVectors;\
+						float	*soundData;\
+						BOOL	floatVectorsNeeded;\
+						double	outputSamplingRate;\
+						double	subvectorScale[];\
+						double	subVectorOffset[];\
+						double	intScaleFactor;\
+						struct header_t	*nistHeader;\
+						char	*utteranceId;\
+						char	*inputSpeechFile;\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+	\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			
+\fc1\cf1 digitalFilter			an object of doing sound preemphasis\
+			soundWindow			the window for plotting the sound\
+			speechProcessor		an object for doing the speech processing\
+			inputSoundType		identifies from where the sound came, see below\
+			numberBytes			# of bytes for saving the processed feature vectors\
+			numberSoundSamples		# of samples in the input sound\
+			numberPRCFrames		# of frames of processed speech\
+			subvectorCount[]		size of each subvector contained in the feature vector\
+			subvectorMin[]		the min value over all the frames of each subvector after scaling\
+			subvectorMax[]		the max value over all the frames of each subvector after scaling\
+			selectionStart			the start point in the raw sound data for processing\
+			selectionLength		the length of the raw sound data for processing\
+			featureVectorLength		the size of each feature vector per frame\
+			minPrc[]			the min value of each subvector read in from a .prc file\
+			maxPrc[]			the max value of each subvector read in from a .prc file\
+			minVector[]			the min scale range for each subvector\
+			maxVector[]			the max scale range for each subvector\
+			preemphasisCoefficient		sound preemphasis coefficient, 0 = no preemphasis\
+			rawSoundData		raw speech data read in from file\
+			charFeatureVectors		feature vectors scaled and converted to char format\
+			intFeatureVectors		feature vectors scaled and converted to int format\
+			floatFeatureVectors		the speech feature vectors\
+			soundData			conversion of rawSoundData to float over the selection range\
+			floatVectorsNeeded		YES if need floating feature vectors when reading .prc file\
+			outputSamplingRate		final sampling rate of speech\
+			subVectorScale[]		scale factors used to convert feature sub vectors to final form\
+			subVectorOffset[]		offset used to convert feature sub vectors to final form\
+			intScaleFactor			multiplier when converting float feature vectors to integer\
+			nistHeader			the header for .prc files, originated from NIST data base\
+			utteranceId			the NIST speech file identification\
+			inputSpeechFile		the name of the input speech file\
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- initWithSoundWindow:\
+\
+		Setting parameters			- setMinVector:to:\
+						- setMaxVector:to:\
+						- setNumberBytes:\
+						- setPreemphasis:\
+						- setFrequencyType: \
+						- setLPCOrder:\
+						- setLiftering:\
+						- setWindowType:\
+						- setProcessType:\
+						- setFilterBanks:\
+						- setFrameLength:\
+						- setOverlapLength:\
+						- setCepstralLength:\
+						- setInputSoundType:\
+						- setFloatVectorsNeeded:\
+\
+		Getting parameters			- getInputSoundType\
+						- getVectorLength\
+						- getNumberBytes\
+						- getNumberFrames\
+						- getSelectionLength\
+						- getSelectionStart\
+						- getFrameLength\
+						- getOverlapLength\
+						- getCepstralLength\
+						- getLPCOrder\
+						- getFilterBanks\
+						- getIntScaleFactor\
+						- getIntFeatureVector\
+						- getUtteranceId\
+						- getMinVector:\
+						- getMaxVector:\
+						- getSamplingFrequency\
+						- getPreemphasisCoefficient\
+						- getSoundData\
+						- getFloatFeatureVectors\
+						- windowName\
+						- spectralName\
+						- lifterName\
+						- frequencyAnalysisName\
+						- speechProcessor\
+\
+		Reading in Files			- readSndFile:\
+						- readMikeFile:\
+						- readPrcFile:\
+						- setDataFromSoundStructure\
+\
+		Interfacing to NIST header		- getNISTHeaderData\
+						- getSubVectorMinMax:::\
+						- getNISTInteger::\
+						- getNISTFloat::\
+						- getNISTChar::\
+\
+		Selecting the Speech Range		- findEndpoints\
+						- resetEndpoints\
+						- extendEndpointsBy:\
+						- getSelectionRange\
+						- setSelectionRange::\
+\
+		Speech Processing			- calculateFloatFeatureVectors\
+						- rawSoundToFloat\
+						- findFeatureVectors\
+						- floatVectorsToInt\
+						- floatVectorsToChar\
+						- intVectorsToChar\
+\
+\
+	INSTANCE METHODS\
+\
+	
+\b calculateFloatFeatureVectors
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- 
+\b calculateFloatFeatureVectors
+\b0 \
+\
+		Calculates the floating point version of the feature vectors from the floating point soundData.  The feature vectors\
+		are stored in the instance variable, 
+\i floatFeatureVectors.
+\i0 \
+\
+		see also, 
+\b floatVectorsToInt, floatVectorsToChar, getFloatFeatureVectors:.
+\b0 \
+\
+\
+	
+\b extendEndpointsBy:\
+		- extendEndpointsBy:
+\b0 (int)
+\i samples
+\i0 \
+\
+		Extends the range of selected speech on either end by 
+\i samples
+\i0 .  This is useful if, for example, speech training data\
+		is needed, but a little bit of the noise on either side of the speech is also desired in the training set.\
+\
+		see also, 
+\b findEndpoints.
+\b0 \
+\
+\
+	
+\b findEndpoints
+\b0 \
+		- 
+\b findEndpoints
+\b0 \
+	\
+		Crude endpoint detector.\
+\
+		see also, 
+\b extendEndpointsBy:, getSelectionRange, setSelectionRange::.
+\b0 \
+\
+\
+	
+\b findFeatureVectors
+\b0 \
+		- (float *)
+\b findFeatureVectors
+\b0 \
+	\
+		This is a local method, and should not be called directly.  It is used by 
+\b calculateFloatFeatureVectors
+\b0  to help \
+		calculate the feature vectors.\
+\
+\
+	
+\b floatVectorsToChar
+\b0 \
+		- 
+\b floatVectorsToChar
+\b0 \
+	\
+		This method is used to convert the floating point version of the feature vectors to characters, in preparation for\
+		saving to a .prc file.  The feature vectors are stored in the instance variable, 
+\i charFeatureVectors
+\i0 \
+\
+		see also, 
+\b floatVectorsToInt, calculateFloatFeatureVectors.
+\b0 \
+\
+\
+	
+\b floatVectorsToInt
+\b0 \
+		- 
+\b floatVectorsToInt
+\b0 \
+	\
+		This method is used to convert the floating point version of the feature vectors to integers.  The feature vectors are\
+		stored in the instance variable, 
+\i intFeatureVectors
+\i0 \
+\
+		see also, 
+\b floatVectorsToChar, calculateFloatFeatureVectors, getIntFeatureVectors.
+\b0 \
+\
+\
+	
+\b frequencyAnalysisName
+\b0 \
+		- (char *)
+\b frequencyAnalysisName
+\b0 \
+	\
+		Returns the name of the type of frequency analysis being used.  See below for a list of names.\
+\
+\
+	
+\b getCepstralLength\
+		- 
+\b0 (int)
+\b getCepstralLength
+\b0 \
+\
+		Returns the number of cepstral coefficients being calculated.  The zeroth coefficient is not counted.\
+\
+\
+	
+\b getFilterBanks\
+		- 
+\b0 (int)
+\b getFilterBanks
+\b0 \
+\
+		Returns the number of filter banks used in the perceptual processing of the speech signal.\
+\
+	\
+	
+\b getFloatFeatureVectors
+\b0 \
+		- (float *)
+\b getFloatFeatureVectors
+\b0 \
+\
+		Returns a pointer to the floating point version of the feature vectors.\
+\
+		see also, 
+\b calculateFloatFeatureVectors.
+\b0 \
+\
+	\
+	
+\b getFrameLength
+\b0 \
+		- (int) 
+\b getFrameLength
+\b0 \
+\
+		Returns the frame size over which the speech processing is performed.\
+\
+\
+	
+\b getInputSoundType
+\b0 \
+		- (int)
+\b getInputSoundType
+\b0 \
+	\
+		Returns an integer indicating from where the sound originated.  See below for a list of types.\
+\
+	\
+	
+\b getIntFeatureVector
+\b0 \
+		- (int *)
+\b getIntFeatureVector
+\b0 \
+\
+		Returns a pointer to the integer version of the feature vectors.\
+\
+		see also, 
+\b calculateFloatFeatureVectors, floatVectorsToInt.
+\b0 \
+\
+\
+	
+\b getIntScaleFactor
+\b0 \
+		- (int)
+\b getIntScaleFactor
+\b0 \
+	\
+		Returns the scale factor used in converting the floating point feature vectors to integers.\
+\
+		see also, 
+\b floatVectorsToInt.
+\b0 \
+\
+\
+	
+\b getLPCOrder\
+		- 
+\b0 (int)
+\b getLPCOrder
+\b0 \
+\
+		Returns the order of the LPC filter being used for the speech analysis.\
+\
+\
+	
+\b getMaxVector:
+\b0 \
+		- (float) 
+\b getMaxVector:
+\b0 (int)
+\i index
+\i0 \
+\
+		Returns the maximum range on the specified subvector.\
+\
+\
+	
+\b getMinVector:
+\b0 \
+		- (float) 
+\b getMaxVector:
+\b0 (int)
+\i index
+\i0 \
+\
+		Returns the minimum range on the specified subvector.\
+\
+\
+	
+\b getNISTChar::
+\b0 \
+		- 
+\b getNISTChar:
+\b0  (char *)
+\i name 
+\i0  
+\b :
+\b0 (char *)
+\i data
+\i0 \
+	\
+		Gets a character string from the NIST header information, and stores it in 
+\i data
+\i0 .  This is a local method, and\
+		should not be called directly.\
+\
+\
+	
+\b getNISTFloat::
+\b0 \
+		- 
+\b getNISTFloat:
+\b0  (char *)
+\i name 
+\i0  
+\b :
+\b0 (float *)
+\i data
+\i0 \
+	\
+		Gets a floating point variable from the NIST header information, and stores it in 
+\i data
+\i0 .  This is a local method, and\
+		should not be called directly.\
+\
+\
+	
+\b getNISTHeaderData
+\b0 \
+		- 
+\b getNISTHeaderData
+\b0 \
+	\
+		Gets information from the NIST header of .prc files, and stores the information in instance variables.  This is a\
+		local method, and should not be called directly.\
+\
+\
+	
+\b getNISTInteger::
+\b0 \
+		- 
+\b getNISTInteger:
+\b0  (char *)
+\i name 
+\i0  
+\b :
+\b0 (int *)
+\i data
+\i0 \
+	\
+		Gets an integer variable from the NIST header information, and stores it in 
+\i data
+\i0 .  This is a local method, and\
+		should not be called directly.\
+\
+\
+	
+\b getNumberBytes
+\b0 \
+		- (int)
+\b getNumberBytes
+\b0 \
+	\
+		Returns the number of bytes used to store the feature vectors in a .prc file.\
+\
+		see also, 
+\b setNumberBytes.
+\b0 \
+\
+\
+	
+\b getNumberFrames
+\b0 \
+		- (int)
+\b getNumberFrames
+\b0 \
+	\
+		Returns the total number of frames in the speech data.\
+\
+\
+	
+\b getOverlapLength
+\b0 \
+		- (int)
+\b getOverlapLength
+\b0 \
+	\
+		Returns the size of the frame overlap, used in the speech processing.\
+\
+		see also, 
+\b setOverlapLength, getFrameLength.\
+
+\b0 \
+\
+	
+\b getPreemphasisCoefficient
+\b0 \
+		- (float)
+\b getPreemphasisCoefficient
+\b0 \
+	\
+		Returns the speech preemphasis filter coefficient.  The filter is of the form, H(z) = 1 - a z
+\up10 -1
+\up0 , where a is the \
+		preemphasis coefficient.\
+\
+		see also, 
+\b setPreemphasis.\
+
+\b0 \
+\
+	
+\b getSamplingFrequency
+\b0 \
+		- (float)
+\b getSamplingFrequency
+\b0 \
+	\
+		Returns the speech sampling frequency.\
+\
+\
+	
+\b getSelectionLength
+\b0 \
+		- (int)
+\b getSelectionLength
+\b0 \
+	\
+		Returns the length of the speech selected for processing.\
+\
+\
+	
+\b getSelectionRange
+\b0 \
+		- (BOOL)
+\b getSelectionRange
+\b0 \
+	\
+		Gets the selection range from the sound subview in the plot window.  Stores the range in the instance variables,\
+		
+\i selectionStart 
+\i0 and 
+\i selectionLength.   
+\i0 Returns YES if the selection range has changed since the last call to this\
+		method.\
+\
+\
+	
+\b getSelectionStart
+\b0 \
+		- (int)
+\b getSelectionStart
+\b0 \
+	\
+		Returns the start point of the speech selected for processing.\
+\
+\
+	
+\b getSoundData
+\b0 \
+		- (float *)
+\b getSoundData
+\b0 \
+	\
+		Returns a pointer to the floating point version of the selected part of the speech.\
+\
+\
+	
+\b getSubVectorMinMax:::
+\b0 \
+		- 
+\b getSubVectorMinMax:
+\b0 (int)
+\i vectorNumber 
+\i0  
+\b :
+\b0 (int *)
+\i min 
+\i0  
+\b :
+\b0 (int *)
+\i max
+\i0 \
+	\
+		Gets the min and max values of a particular subvector.  This is a local method, and should not be called directly.\
+\
+\
+	
+\b getUtteranceId
+\b0 \
+		- (char *)
+\b getUtteranceId
+\b0 \
+	\
+		Returns a pointer to the speech utterance information.  This is a local method, and should not be called directly.\
+\
+\
+	
+\b getVectorLength
+\b0 \
+		- (int)
+\b getVectorLength
+\b0 \
+	\
+		Returns the length of the processed speech vector.\
+\
+\
+	
+\b initWithSoundWindow:
+\b0 \
+		- 
+\b initWithSoundWindow:
+\b0 (id)
+\i newSoundWindow
+\i0 \
+	\
+		Initializes the receiver with a sound window for plotting the speech.  If the application won't be using a sound \
+		window, set 
+\i newSoundWindow 
+\i0 = nil.\
+\
+\
+	
+\b intVectorsToChar
+\b0 \
+		- 
+\b intVectorsToChar
+\b0 \
+	\
+		This method is used to convert the integer version of the feature vectors to characters, in preparation for\
+		saving to a .prc file.  The feature vectors are stored in the instance variable, 
+\i charFeatureVectors.
+\i0 \
+\
+		see also, 
+\b floatVectorsToInt, calculateFloatFeatureVectors.
+\b0 \
+\
+\
+	
+\b lifterName
+\b0 \
+		- (char *)
+\b lifterName
+\b0 \
+	\
+		Returns the name of the cepstral liftering being used.  See below for a list of lifters.\
+\
+		see also, 
+\b setLiftering.
+\b0 \
+\
+\
+	
+\b rawSoundToFloat
+\b0 \
+		- (float *)
+\b rawSoundToFloat
+\b0 \
+	\
+		Converts the input speech data to a floating point format.  This is a local method, and should not be called directly.\
+\
+\
+	
+\b readPrcFile:
+\b0 \
+		- (BOOL)
+\b readPrcFile:
+\b0 (const char *)
+\i fileName
+\i0 \
+	\
+		Reads in the .prc file.  A .prc file is a processed speech file.  Returns YES if everything went OK.\
+\
+\
+	
+\b readSndFile:
+\b0 \
+		- (BOOL)
+\b readSndFile:
+\b0 (const char *)
+\i fileName
+\i0 \
+	\
+		Reads in a NeXT .snd file.  Returns YES if everything went OK.\
+\
+\
+	
+\b readMikeFile:
+\b0 \
+		- (BOOL)
+\b readMikeFile:
+\b0 (const char *)
+\i fileName
+\i0 \
+	\
+		Reads in a NeXT .snd file.  Returns YES if everything went OK.  This method differs from the above in that the\
+		sound file was recorded from the NeXT microphone.\
+\
+\
+	
+\b resetEndpoints
+\b0 \
+		- 
+\b resetEndpoints
+\b0 \
+	\
+		Sets the speech selection range to the entire speech data.\
+\
+\
+	
+\b setCepstralLength:
+\b0 \
+		- 
+\b setCepstralLength:
+\b0 (int)
+\i length
+\i0 \
+	\
+		Sets the number of cepstral coefficients to be used in the speech processing.  The zeroth coefficient is not\
+		counted.\
+\
+\
+	
+\b setDataFromSoundStructure
+\b0 \
+		- 
+\b setDataFromSoundStructure
+\b0 \
+	\
+		Gets information from the .snd file header to store in instance variables.  This a local method, and should not\
+		be called directly.\
+\
+\
+	
+\b setFilterBanks:
+\b0 \
+		- 
+\b setFilterBanks:
+\b0 (int)
+\i number
+\i0 \
+	\
+		Sets the number of perceptual filter banks to be used in the speech processing.\
+\
+\
+	
+\b setFloatVectorsNeeded:
+\b0 \
+		- 
+\b setFloatVectorsNeeded:
+\b0 (BOOL)
+\i flag
+\i0 \
+	\
+		Sets the instance variable, 
+\i floatVectorsNeeded = flag.  
+\i0 Set this variable equal to YES if floating point feature\
+		vectors are needed when reading .prc file.\
+\
+\
+	
+\b setFrameLength:
+\b0 \
+		- 
+\b setFrameLength:
+\b0 (int)
+\i length
+\i0 \
+	\
+		Sets the frame length used for speech processing equal to the input length.\
+\
+\
+	
+\b setFrequencyType:
+\b0 \
+		- 
+\b setFrequencyType:
+\b0 (int)
+\i type
+\i0 \
+	\
+		Sets the instance variable, 
+\i frequencyType = type.  
+\i0 Set this variable equal to 1 if perceptual processing is desired,\
+		otherwise, set to 0 for linear processing.\
+\
+\
+	
+\b setInputSoundType:
+\b0 \
+		- 
+\b setInputSoundType:
+\b0 (int)
+\i type
+\i0 \
+	\
+		Sets the instance variable, 
+\i inputSoundType = type.  
+\i0 See below for a list of input sound types.\
+\
+\
+	
+\b setLPCOrder:
+\b0 \
+		- 
+\b setLPCOrder:
+\b0 (int)
+\i order
+\i0 \
+	\
+		Sets the order of the LPC analysis filter.\
+\
+\
+	
+\b setLiftering:
+\b0 \
+		- 
+\b setLiftering:
+\b0 (int)
+\i type
+\i0 \
+	\
+		Sets the type of lifter to be applied to the cepstral coefficients.  See below for a list of types.\
+\
+\
+	
+\b setMaxVector:to:
+\b0 \
+		- 
+\b setMaxVector:
+\b0 (int)
+\i index 
+\b\i0 to:
+\b0 (float)
+\i value
+\i0 \
+	\
+		Sets the maximum range on the speech sub vector number, 
+\i index, 
+\i0 equal to the input value.\
+\
+\
+	
+\b setMinVector:to:
+\b0 \
+		- 
+\b setMinVector:
+\b0 (int)
+\i index 
+\b\i0 to:
+\b0 (float)
+\i value
+\i0 \
+	\
+		Sets the minimum range on the speech sub vector number, 
+\i index, 
+\i0 equal to the input value.\
+\
+\
+	
+\b setNumberBytes:
+\b0 \
+		- 
+\b setNumberBytes:
+\b0 (int)
+\i number
+\i0 \
+	\
+		Sets the number of bytes to be used in storing the feature vectors in a .prc file.\
+\
+\
+	
+\b setOverlapLength:
+\b0 \
+		- 
+\b setOverlapLength:
+\b0 (int)
+\i length
+\i0 \
+	\
+		Sets the number of speech samples to overlap for each new frame.\
+\
+\
+	
+\b setPreemphasis:
+\b0 \
+		- 
+\b setPreemphasis:
+\b0 (float)
+\i coefficient
+\i0 \
+	\
+		Sets the speech preemphasis filter coefficient.  The filter is of the form, H(z) = 1 - a z
+\up10 -1
+\up0 , where a is the \
+		preemphasis coefficient.\
+\
+		see also, 
+\b getPreemphasis.\
+
+\b0 \
+\
+	
+\b setProcessType:
+\b0 \
+		- 
+\b setProcessType:
+\b0 (int)
+\i type
+\i0 \
+	\
+		Sets the type of spectral processing to be performed on the speech data.  See below for a list of types.\
+\
+\
+	
+\b setSelectionRange::
+\b0 \
+		- 
+\b setSelectionRange:
+\b0 (int)
+\i start 
+\b\i0 :
+\b0 (int)
+\i length
+\i0 \
+	\
+		Sets range of the speech data over which to do the processing.  This is a local method, and should not\
+		be called by user.\
+\
+\
+	
+\b setWindowType:
+\b0 \
+		- 
+\b setWindowType:
+\b0 (int)
+\i type
+\i0 \
+	\
+		Sets the type of windowing performed on a frame-by-frame basis.  See below for a list of window types.\
+\
+\
+	
+\b spectralName
+\b0 \
+		- (char *)
+\b spectralName
+\b0 \
+	\
+		Returns the name of the spectral processing being used.  See below for a list of processing types.\
+\
+		see also, 
+\b setProcessType.
+\b0 \
+\
+\
+	
+\b speechProcessor
+\b0 \
+		- (id)
+\b speechProcessor
+\b0 \
+	\
+		Returns a pointer to the speech processing object.  The sender can then call some of the speechProcessor's \
+		methods directly.\
+\
+\
+	
+\b windowName
+\b0 \
+		- (char *)
+\b windowName
+\b0 \
+	\
+		Returns the name of the speech windowing being used.  See below for a list of windows.\
+\
+		see also, 
+\b setWindowType.
+\b0 \
+\
+
+\pard\tx2600\fi-20\li2100\fc0\cf0 \
+CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\f1\fs24 	
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f2\fs28\fc1\cf1 \
+
+\fs24 // inputSoundType definitions:\
+		#define SPEECH_FROM_SND		0	/* From a .snd file		*/\
+		#define SPEECH_FROM_PRC		1	/* From a .prc file		*/\
+		#define SPEECH_FROM_WAV		2	/* From a NIST .wav file	*/\
+		#define SPEECH_FROM_MIKE		3	/* From NeXT microphone	*/\
+// cepstral liftering types\
+		#define NO_LIFTERING			0\
+		#define RAISED_SINE			1\
+		#define LINEAR			2\
+		#define GAUSSIAN			3\
+		#define EXPONENTIAL			4\
+// spectral processing types\
+		#define LPC_CEPSTRUM			0	/* Cepstral from LPC recursion 	*/\
+		#define CEPSTRUM			1	/* Cepstral from inverse FFT	*/\
+		#define LPC_SPECTRUM			2	/* LPC coefficients		*/\
+		#define SONOGRAM			3	/* Filter bank/FFT spectral energies*/\
+// speech window types\
+		#define HAMMING			0\
+		#define HANNING			1\
+		#define RECTANGULAR			2\
+		#define TRIANGULAR			3\
+		#define BLACKMAN			4\
+		#define BLACKMAN_HARRIS 		5\
+\
+\
+		char *spectral_names[] = \{"LPC_Cepstrum", "Cepstrum", "LPC_Spectrum",\
+                               		"Sonogram", "Energy"\};\
+		char *window_names[]   = \{"Hamming", "Hanning", "Rectangular", "Triangular",\
+                             			"Blackman", "Blackman_Harris"\};\
+		char *lifter_names[]  = \{"No_liftering", "Raised_Sine", "Linear",\
+                                           		"Gaussian", "Exponential"\};\
+		char *frequency_analysis_names[] = \{"Perceptual", "Linear"\};\
+\
+
+\fs28 \
+
+}

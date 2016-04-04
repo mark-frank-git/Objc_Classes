@@ -1,0 +1,11 @@
+File: /User/frank/Objc_Classes/IntNN
+The following objects are contained in this directory for doing neural network
+simulations:
+	
+
+1. IntFeatureMap: An integer version of the feature map.
+
+2. IntNeuron: An integer neuron object.
+
+3. SpecialMaps: A subclass of IntFeatureMap which adds algorithms such as
+   LVQ, LBG, etc.

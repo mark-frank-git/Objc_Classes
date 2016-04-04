@@ -1,0 +1,568 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+\cocoascreenfonts1{\fonttbl\f0\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+\margl120\margr0\vieww13740\viewh11920\viewkind0
+\pard\partightenfactor0
+
+\f0\i\fs24 \cf0 IntFeatureMap V0.1\
+24-Nov-1992\
+
+\i0 Mark Frank\
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\fs28 \cf0 \
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b\fs36 \cf0 \
+\pard\tx7140\li2100\partightenfactor0
+
+\b0\fs16 \cf0 \
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b\fs36 \cf0 	IntFeatureMap\
+	\
+		
+\b0\fs28 INHERITS FROM			Object
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			IntFeatureMap.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The IntFeatureMap class implements a feed forward self-organizing feature map.  		The neuron weights are updated using Kohonen's self-organizing feature map 			algorithm.\
+\
+		INSTANCE VARIABLES\
+\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 			
+\i Inherited from Object
+\i0 		Class	isa;\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs16 \cf0 \
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\i\fs28 \cf0 			Declared in IntFeatureMap
+\i0 	id	*mapNeurons;\
+						id	*inputNeurons;\
+						id	randomObject;\
+						int	neuronType;\
+						int	rows, columns;\
+						int	numberMapNeurons;\
+						int	numberInputNeurons;\
+						int	numberInputs, numberOutputs;\
+						int	neighborhoodSize;\
+						int	winnerNumber, runnerUp;\
+						int	numberSmooth;\
+						BOOL	feedforward;\
+						BOOL	smoothOutput;\
+						double	etaInput, etaOutput;\
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 				\
+	\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 			mapNeurons			an array of the neurons in the feature map\
+			inputNeurons			an array of the neurons in the input layer\
+			randomObject			an object for randomizing the weights\
+			neuronType			the type of neuron calculation\
+			rows			# of rows in the map\
+			columns			# of columns in the map\
+			numberMapNeurons		# of neurons in map\
+			numberInputNeurons		# of neurons in input layer\
+			numberInputs			# of input neurons used for vector input\
+			numberOutputs		# of input neurons used for reverse flow output\
+			neighborhoodSize		radius of winner neighborhood\
+			winnerNumber		neuron # of current winner\
+			runnerUp			neuron # of current runner up to winner\
+			numberSmooth		number of top neurons to use in smoothing outputs\
+			feedforward			use feedforward calculations, i.e., no context input\
+			smoothOutput			smooth (avg) the reverse flow outputs\
+			etaInput, etaOutput		the learning rates for input and reverse flow\
+\
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- init\
+						- initWithInputs: outputs: rows: columns:\
+						- initConnections\
+						- freeConnections\
+						- initializeWeights\
+\
+		Running the algorithm		- applyInput:\
+						- updateWeights\
+						- updateWinner\
+						- updateRunnerUp\
+						- winnerNeighbors\
+						- updateWeightsOfNeuron:\
+						- updateInputWeightsOfNeuron:\
+						- updateOutputWeightsOfNeuron:\
+\
+		Setting parameters			- setFeedforward:\
+						- setLearningInput: output:\
+						- setNeuronType:\
+						- setRadius: \
+						- setSmoothOutput:\
+						- setNumberInputNeurons:\
+						- setReverseFlowOutputs:\
+						- setNumberRows: columns:\
+\
+		Getting parameters			- getInputClass\
+						- getLearningInput: output:\
+						- getNearestNeurons:\
+						- getNeuron:\
+						- getNeuronType\
+						- getRadius\
+						- getReverseFlow\
+						- getWinner\
+						- getWinnerWeightsStart: length:\
+						- getNeuronWeightsStart:length:neuron:\
+						- isFeedforward\
+\
+	INSTANCE METHODS\
+\
+	
+\b applyInput:
+\b0 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 		- 
+\b applyInput:
+\b0  (int *)
+\i input
+\i0 \
+\
+		Feeds the input vector pointed to by 
+\i input
+\i0  to all the neurons in the map.  Also calculates winner.\
+\
+\
+	
+\b freeConnections\
+		- freeConnections
+\b0 \
+\
+		Frees the feature map connections to the input layer.  This routine should be called after changing\
+		the number of map neurons or number of input layer neurons, see also 
+\b initConnections
+\b0 .\
+\
+\
+	
+\b getInputClass
+\b0 \
+		- (int)
+\b getInputClass
+\b0 \
+	\
+		Returns the class of the input neuron layer by finding the largest class.\
+\
+\
+	
+\b getLearningInput: output:
+\b0 \
+		- 
+\b getLearningInput:
+\b0  (double *)
+\i etaInput
+\i0   
+\b output:
+\b0  (double *)
+\i etaOutput
+\i0 \
+	\
+		Returns the learning parameters in 
+\i etaInput
+\i0  and 
+\i etaOutput
+\i0 .  These control the learning\
+		rates for the input and reverse flow synapses.\
+\
+\
+	
+\b getNearestNeurons\
+		- 
+\b0 (int *)
+\b getNearestNeurons
+\b0 \
+\
+		Returns a pointer to a list of neuron numbers closest to the last input vector.  That is,\
+		list[0] == winner.\
+\
+\
+	
+\b getNeuron:\
+		- getNeuron:
+\b0  (int)
+\i neuronNumber
+\i0 \
+\
+		Returns a pointer to the neuron whose number is 
+\i neuronNumber
+\i0 .  Note that the 			neurons are numbered sequentially starting at 0 by rows.\
+\
+	\
+	
+\b getNeuronType
+\b0 \
+		- (int)
+\b getNeuronType
+\b0 \
+\
+		Returns the value of the neuron calculations being used.  The definitions are: 0 = dot\
+		product, 1 = normalized dot product, and 2 = Euclidean distance.\
+\
+	\
+	
+\b getRadius
+\b0 \
+		- (int) 
+\b getRadius
+\b0 \
+\
+		Returns the neighborhood size.\
+\
+\
+	
+\b getReverseFlow
+\b0 \
+		- (int *)
+\b getReverseFlow
+\b0 \
+	\
+		Returns an int array containing the winner's weights corresponding to the reverse flow output.\
+\
+\
+	
+\b getWinne
+\b0 r\
+		- (int) 
+\b getWinner
+\b0 \
+\
+		Returns an integer specifying the neuron number of the current winner.\
+\
+\
+	
+\b getWinnerWeightsStart: length:
+\b0 \
+		- (int *)
+\b getWinnerWeightsStart:
+\b0  (int)
+\i start 
+\i0  
+\b length:
+\b0  (int)
+\i length
+\i0 \
+	\
+		Returns an int array containing the winner's weights starting at input[
+\i start
+\i0 ] and\
+		ending at input[
+\i start+length
+\i0 -1].\
+\
+\
+	
+\b getNeuronWeightsStart: length:neuron:
+\b0 \
+		- (int *)
+\b getNeuronWeightsStart:
+\b0  (int)
+\i start 
+\i0  
+\b length:
+\b0  (int)
+\i length 
+\i0\b neuron:
+\b0  (int)
+\i neuron
+\i0 \
+	\
+		Returns an int array containing the
+\i  neuron
+\i0 's weights starting at input[
+\i start
+\i0 ] and\
+		ending at input[
+\i start+length
+\i0 -1].\
+\
+\
+	
+\b isFeedforward
+\b0 \
+		- (BOOL) 
+\b isFeedforward
+\b0 \
+\
+		Returns whether or not map is in feedforward configuration.  Default is feedforward.\
+		This mode is useful for ignoring the context input during recognition.\
+\
+\
+	
+\b init\
+		- init \
+
+\b0 \
+		Initializes the receiver.  This should not be called directly. Use \
+		
+\b initWithInputs: outputs: rows: columns:
+\b0  instead.\
+\
+\
+	
+\b initWithInputs: outputs: rows: columns:\
+		- initWithInputs:
+\b0  (int)
+\i numberInputs
+\i0   
+\b outputs: 
+\b0 (int)
+\i numberOutputs
+\i0 \
+                                     
+\b  rows:
+\b0  (int)
+\i numberRows
+\i0  
+\b columns:
+\b0 (int)
+\i numberCols
+\i0 \
+\
+		Initializes the receiver creating a feature map net with 
+\i numberInputs
+\i0  inputs, 			
+\i numberOutputs
+\i0  outputs, 
+\i numberRows
+\i0  rows, and
+\i  numberCols
+\i0  columns.  Note that\
+		the inputs to the map should be ordered from 0->(
+\i numberInputs
+\i0 -
+\i numberOutputs
+\i0 ).\
+		The remaining inputs are for context input used in supervised training.\
+\
+\
+	
+\b initConnections\
+		- initConnections
+\b0 \
+\
+		Initializes the feature map connections to the input layer.  This routine is called by \
+		
+\b initWithInputs: outputs: rows: columns:
+\b0 , however, if the layer parameters change, one should\
+		call 
+\b freeConnections
+\b0  before the change, and then 
+\b initConnections
+\b0  after the change to set up the\
+		feature map for the new parameters.\
+\
+\
+	
+\b initializeWeights\
+		- initializeWeights
+\b0 \
+\
+		Initializes the receiver's weights to their initial random values.\
+\
+\
+	
+\b setFeedforward:\
+		- setFeedforward
+\b0 : (BOOL)
+\i flag
+\i0 \
+\
+		Sets the map for feedforward operation.  In feedforward, the context inputs are not\
+		used in update calculation.\
+\
+	\
+	
+\b setLearningInput: output:\
+		- setLearningInput:
+\b0  (double)
+\i etaInput
+\i0   
+\b output:
+\b0  (double)
+\i etaOutput
+\i0 \
+	\
+		Sets the learning parameters, 
+\i etaInput
+\i0  and 
+\i etaOutput
+\i0 .  These control the learning\
+		rates for the input and reverse flow synapses.\
+\
+\
+	
+\b setNeuronType:\
+		- setNeuronType:
+\b0  (int)
+\i neuronType
+\i0 \
+\
+		Sets the neuron calculation type for the map.  The definitions are: 0 = dot\
+		product, 1 = normalized dot product, and 2 = Euclidean distance.\
+\
+\
+	
+\b setNumberSmooth:\
+		- setNumberSmooth:
+\b0  (int)
+\i number
+\i0 \
+\
+		Sets the number of top neurons to use in averaging the reverse flow outputs.\
+\
+\
+	
+\b setRadius:\
+		- setRadius:
+\b0  (int)
+\i newSize
+\i0 \
+\
+		Sets the neighborhood size.\
+\
+\
+	
+\b setSmoothOutput:\
+		- setSmoothOutput:
+\b0  (int)
+\i flag
+\i0 \
+\
+		Sets the instance variable, smoothOutput to 
+\i flag.
+\i0 \
+\
+\
+	
+\b setNumberInputNeurons:\
+		- setNumberInputNeurons:
+\b0  (int)
+\i number
+\i0 \
+\
+		Sets the number of  neurons in the input layer, user should call 
+\b freeConnections
+\b0  before calling\
+		this method, and 
+\b initConnections
+\b0  after calling this method.\
+		\
+\
+	
+\b setReverseFlowOutputs:\
+		- setReverseFlowOutputs:
+\b0  (int)
+\i number
+\i0 \
+\
+		Sets the number of  weights to be used for reverse flow outputs, user should call 
+\b freeConnections
+\b0 \
+		before calling this method, and 
+\b initConnections
+\b0  after calling this method.\
+		\
+\
+	
+\b setNumberRows: columns:\
+		- setNumberRows:
+\b0  (int)
+\i mapRows 
+\i0\b columns:
+\b0  (int)
+\i mapCols
+\i0 \
+\
+		Sets the number of  rows and columns in the map, user should call 
+\b freeConnections
+\b0  before calling\
+		this method, and 
+\b initConnections
+\b0  after calling this method.\
+\
+\
+	
+\b updateWeights\
+		- updateWeights
+\b0 \
+\
+		Updates the neuron weights using the Kohonen learning algorithm.  You must first\
+		call updateWinner before calling this method.\
+\
+\
+	
+\b updateWinner\
+		- updateWinner
+\b0 \
+\
+		This method is now implemented in applyInput.  Calling this method does nothing.\
+\
+\
+	
+\b updateRunnerUp\
+		- updateRunnerUp
+\b0 \
+\
+		Updates the runner up neuron based on all the acitivities of the neurons.\
+\
+\
+	
+\b updateInputWeightsOfNeuron\
+		- updateInputWeightsOfNeuron:
+\b0  (int)
+\i neuronNumber
+\i0 \
+\
+		Updates the weights of a particular neuron using the Kohonen learning algorithm.\
+		This method is particularly useful in using the DDANN algorithm.\
+\
+	\
+	
+\b updateOutputWeightsOfNeuron\
+		- updateOutputWeightsOfNeuron:
+\b0  (int)
+\i neuronNumber
+\i0 \
+\
+		Updates the weights of a particular neuron using the Kohonen learning algorithm.\
+		This method is particularly useful in using the DDANN algorithm.\
+	\
+	\
+	
+\b updateWeightsOfNeuron\
+		- updateWeightsOfNeuron: 
+\b0 (int)
+\i neuronNumber
+\i0 \
+\
+		Updates the weights of a particular neuron using the Kohonen learning algorithm.\
+		Do not call this method directly, use: 
+\b updateWeights
+\b0 .\
+\
+\
+	
+\b winnerNeighbors:
+\b0 \
+		- (int *) 
+\b winnerNeighbors:
+\b0  (int)
+\i neuronNumber
+\i0 \
+\
+		Finds the list of neuron numbers in the neighborhood of neuronNumber.\
+		This method is not usually called directly.\
+}

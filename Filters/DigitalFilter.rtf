@@ -1,0 +1,580 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh9740
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b\i0\ulnone\ql\fs36\fi0\li1100\gray0\fc0\cf0\up0\dn0 DigitalFilter\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	AnalogFilter\
+
+\fs16 \
+
+\fs28 DECLARED IN	DigitalFilter.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The DigitalFilter finds digital filters having specified characteristics.  It inherits from AnalogFilter so that it can create digital filters from analog prototypes.  It also contains methods for filtering discrete time series.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from AnalogFilter
+\i0 	id	aPolyObject, bPolyObject;\
+	int	filterPassType;\
+	int	filterStructureType;\
+	int	analogType;\
+	int	responseType;\
+	int	filterOrder;\
+	int	numberPoles;\
+	int	numberZeros;\
+	BOOL	realAxisPoles;\
+	double	fo;\
+	double	fc;\
+	double	thetaOld;\
+	double	subAngle;\
+	double	deltaOmega;\
+	double	passBandGain;\
+	COMPLEX	*analogPoles;\
+	COMPLEX	*analogZeros;\
+
+\fs16 \
+
+\i\fs28 Declared in AnalogFilter
+\i0  	int	filterType;\
+	int	windowType;\
+	int	interpolateFactor;\
+	int	decimateFactor;\
+	float	*window;\
+	double	fs;\
+	double	*doubleShift;\
+	COMPLEX	*complexShift;\
+	COMPLEX	*digitalPoles;\
+	COMPLEX	*digitalZeros;\
+\
+	\
+filterType	0 = digital filter, 1 = analog filter\
+windowType	for an FIR filter, see possible window types below\
+interpolateFactor	factor for interpolating (adding zeros) a time series\
+decimateFactor	factor for decimating (deleting samples) a time series\
+window	the windowing function for FIR filters\
+fs	sampling frequency in Hertz\
+doubleShift	used for filtering a time series\
+complexShift	used for filtering a complex time series\
+digitalPoles	the poles of the filter in the Z domain\
+digitalZeros	the zeros of the filter in the Z domain\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Initializing a new instance	
+\f1 - 
+\f0 init\
+ 	± initWithPassType:fo:fc:fs:order:\
+	\
+Setting parameters	± setDigitalFilterType:\
+	± setWindowingType:\
+	± setFilterFo:fc:fs:\
+\
+Getting parameters	
+\f1 -
+\f0 getFilterType\
+	
+\f1 -
+\f0 getInterpolateFactor\
+	± getDecimateFactor\
+	± getPoles\
+ 	± getZeros\
+	\
+Converting	± findPolesZeros\
+	± sToz::::\
+	± transferForFIRWindow\
+	± findTransferFunction\
+	\
+Filter response	± filterResponseAtFrequencies:numberFreq:\
+	± digitalResponseAtFrequencies:numberFreq:\
+	± windowFunction:\
+\
+Filtering	±  filterFloatArray:numberPts:\
+	±  filterFloatData:\
+	±  filterComplexData:\
+	±  interpolateInput:numberPts:\
+	±  decimateInput:numberPts:\
+	±  findWarpFactorsFor:\
+	±  checkWarpFor:\
+\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b\fs28 \
+checkWarpFor:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 double
+\f1 )
+\f0\b checkWarpFor:
+\f1\b0 (
+\f0 double
+\f1 )
+\f0\i ratio
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This is a local method, it is used to find the decimation/interpolation factors.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 decimateInput:numberPts:\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 float *
+\f1 )
+\f0\b decimateInput:
+\f1\b0 (
+\f0 float *
+\f1 )
+\f0\i input 
+\b\i0 numberPts:
+\f1\b0 (
+\f0 int
+\f1 )
+\f0\i numberPts\
+
+\pard\tx7140\b\i0\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 This method decimates an input time series, and returns a pointer to the result.  The decimation factor is found in the method, 
+\b findWarpFactorsFor:
+\b0 .\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+digitalResponseAtFrequencies:numberFreq:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 float *
+\f1 )
+\f0\b analogResponseAtFrequencies:
+\f1\b0 (
+\f0 float *
+\f1 )
+\f0\i frequencies
+\b\i0  numberFreq:
+\f1\b0 (
+\f0 int
+\f1 )
+\f0\i number
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Finds the filter's response at the specified frequencies, which are in radians/second.\
+\
+See also, 
+\b filterResponseAtFrequencies:numberFreq:.
+\b0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+filterComplexData:\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 FCOMPLEX
+\f1 )
+\f0\b filterComplexData:
+\f1\b0 (
+\f0 FCOMPLEX
+\f1 )
+\f0\i input\
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Filters a single complex data point, and returns the result.\
+
+\b \
+
+\pard\tx7140\li2100\fc0\cf0 filterFloatArray:numberPts:\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b filterFloatArray:
+\f1\b0 (
+\f0 float *
+\f1 )
+\f0\i input 
+\b\i0 numberPts:
+\f1\b0 (
+\f0 int
+\f1 )
+\f0\i numberPts\
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Filters an array of floating point data in-line.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+filterFloatData:\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 double
+\f1 )
+\f0\b filterComplexData:
+\f1\b0 (
+\f0 float
+\f1 )
+\f0\i input\
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Filters a single float data point, and returns the result.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+filterResponseAtFrequencies:numberFreq:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 float *
+\f1 )
+\f0\b filterResponseAtFrequencies:
+\f1\b0 (
+\f0 float *
+\f1 )
+\f0\i frequencies
+\b\i0  numberFreq:
+\f1\b0 (
+\f0 int
+\f1 )
+\f0\i number
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Finds the filter's response at the specified frequencies, which are in radians/second.  This differs from 
+\b digitalResponseAtFrequencies:numberFreq: 
+\b0 in that if filter_type == ANALOG_FILTER, then this method finds the response of an analog filter.\
+\
+See also, 
+\b filterResponseAtFrequencies:numberFreq:.\
+
+\b0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 findPolesZeros\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b findPolesZeros\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Finds the poles and zeros of the selected filter.  Local method, should not be called by the user.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 findTransferFunction\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b findTransferFunction\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Finds the transfer function coefficients from the location of the poles and zeros. \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+findWarpFactorsFor:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b findWarpFactorsFor:
+\b0 (double)
+\i ratio
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Finds the interpolation and decimation factors to obtain an input sampling rate conversion ratio.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 \
+See also, 
+\b getDecimateFactor, getInterpolateFactor.\
+
+\pard\tx7140\li2100\fc0\cf0 \
+getDecimateFactor\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (int)
+\b getDecimateFactor\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the decimation factor to obtain an input sampling rate conversion ratio.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 \
+See also, 
+\b getInterpolateFactor, findWarpFactorsFor:.\
+\
+
+\pard\tx7140\li2100\fc0\cf0 getFilterType\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (int)
+\b getFilterType\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the type of filter, digital=0 or analog=1.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+getInterpolateFactor\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (int)
+\b getInterpolateFactor\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the interpolation factor to obtain an input sampling rate conversion ratio.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 \
+See also, 
+\b getDecimateFactor, findWarpFactorsFor:.\
+\
+
+\pard\tx7140\li2100\fc0\cf0 getPoles\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX *)
+\b getPoles\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the complex poles of the filter.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 getZeros\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX *)
+\b getZeros\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the complex zeros of the filter.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 init\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b init\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Initializes the object.  Probably should not be called directly, use one of the initialization methods below.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+initWithPassType:fo:fc:fs:order:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b initWithPassType:
+\b0 (int)
+\i type 
+\b\i0 fo:
+\b0 (double)
+\i centerFreq 
+\b\i0 fc:
+\b0 (double)
+\i cutoffFreq\
+                                     
+\b\i0 fs:
+\b0 (double)
+\i samplingFreq 
+\b\i0 order:
+\b0 (int)
+\i order\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Initializes a Butterworth (the default) digital filter by giving its pass band type, its center frequency, its cutoff frequency, its sampling frequency, and its order.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 interpolateInput:numberPts:\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 float *
+\f1 )
+\f0\b interpolateInput:
+\f1\b0 (
+\f0 float *
+\f1 )
+\f0\i input 
+\b\i0 numberPts:
+\f1\b0 (
+\f0 int
+\f1 )
+\f0\i numberPts\
+
+\pard\tx7140\b\i0\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 This method interpolates an input time series, and returns a pointer to the result.  The interpolation factor is found in the method, 
+\b findWarpFactorsFor:
+\b0 .\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+sToz::::\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b sToz:
+\f1\b0 (
+\f0 double
+\f1 )
+\f0\i sReal 
+\b\i0 :
+\f1\b0 (
+\f0 double
+\f1 )
+\f0\i sImag 
+\b\i0 :
+\f1\b0 (
+\f0 double *
+\f1 )
+\f0\i zReal 
+\b\i0 :
+\f1\b0 (
+\f0 double *
+\f1 )
+\f0\i zImag 
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This is a local method, should not be called by the user.  It takes an s plane point and converts it into a z plane point using the bilinear transformation.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+setDigitalFilterType:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setDigitalFilterType:
+\b0 (int)
+\i type
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets filterType to the input type.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+setFilterFo:fc:fs:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setFilterFo:
+\b0 (double)
+\i centerFreq 
+\b\i0 fc:
+\b0 (double)
+\i cutoff 
+\b\i0 fs:
+\b0 (double)
+\i samplingFreq
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the filter's center, cutoff, and sampling frequencies
+\i .
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setWindowingType:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setWindowingType:
+\b0 (int)
+\i type
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the instance variable, windowType, to 
+\i type.
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+transferForFIRWindow\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b transferForFIRWindow\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by user.  It is used to find the FIR filter corresponding to the particular windowType selected
+\i .
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+windowFunction:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (float *)
+\b windowFunction:
+\b0 (int)
+\i length
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by user.  It is used to find the FIR filter corresponding to the particular windowType selected
+\i .
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 \
+\
+
+\pard\tx2600\b0\fi-20\li2100\fc0\cf0 CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\f2\fs24 #define DIGITAL_FILTER   0     /* filterType*/\
+#define ANALOG_FILTER    1\
+\
+#define HAMMING          0     /* windowType*/\
+#define HANNING          1\
+#define RECTANGULAR      2\
+#define TRIANGULAR       3\
+#define BLACKMAN         4\
+#define BLACKMAN_HARRIS  5\
+	
+\fc1\cf1 \
+#define LOW_PASS   0          /* filterPassType */\
+#define HIGH_PASS  1\
+#define BAND_PASS  2\
+#define BAND_STOP  3\
+\
+#define TRANSFER_FUNCTION 0  /* filterStructureType */\
+#define POLE_ZERO         1\
+#define FIR_WINDOW        2\
+\
+#define BUTTERWORTH       0  /* analogType */\
+#define CHEBYSHEV         1\
+#define BESSEL            2\
+\
+#define MAGNITUDE         0  /* response type */\
+#define DB_MAGNITUDE      1\
+#define PHASE             2\
+#define PHASE_DELAY       3\
+#define GROUP_DELAY       4\
+#define POLE_ZERO_PLOT    5\
+#define SIGNAL_RESPONSE   6\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f0\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+}

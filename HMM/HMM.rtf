@@ -1,0 +1,640 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Ohlfs;}
+\paperw16700
+\paperh11400
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	HMM\
+	\
+		
+\b0\fs28 INHERITS FROM			Object
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			HMM.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The HMM class implements an HMM training/recognition algorithm.  The code is partly based on C code written by Ed\
+		Srenger of CSRL.  It has the capability of operating as a traditional HMM with codebook indices as inputs, or with class\
+		probabilities as inputs.  Known bugs: i) This is really an inconsistency: we use the forced model (i.e., model to be trained)\
+		in some but not all cases to control behavior in the object's methods.  This ought to be more consistent.  ii) The file format\
+		for the saved probabilities ought to be more standardized similar to the processed speech files..\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from Object	
+\i0 	Class	isa;\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in HMM	
+\i0 	
+\fc1\cf1 id	*wordModels;\
+						int	numberModels;\
+						int	numberInputProbabilities;\
+						int	frameCount;\
+						int	bestModel;\
+						int	forcedModel;\
+						int	codebooks;\
+						int	modelLength;\
+						int	*stateCounter;\
+						BOOL	forcedViterbi;\
+						float	*stateProbabilities;\
+						float	**probabilityScale;\
+						double	bestScore;\
+						double	*logProbabilities;\
+						NXZone	*myZone\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			wordModels			array of model objects that do the work\
+			numberModels		dimension of above array\
+			numberInputProbabilities	dimension of input probabilities array\
+			frameCount			number of frames since reset\
+			bestModel			the model with highest score during last recog.\
+			forcedModel			model to use during training\
+			codebooks			number of codebooks (i.e., cepstral, etc.)\
+			modelLength			number of states in the models\
+			stateCounter			counter used for state scaling\
+			forcedViterbi			if true, the HMM operates in a training mode\
+			stateProbabilities		the probability of each state in all of the models\
+			probabilityScale		scale for feature map outputs\
+			bestScore			the last score of the best model\
+			logProbabilities		log of the probabilities input to this object\
+			myZone			zone for allocating arrays\
+
+\fc1\cf1 \
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- initWithNumberModels:numberStates: numberCodebooks:codebookDimensions:\
+							  codebookWeights:zone:\
+						- free\
+						- allocateArrays\
+						- freeArrays\
+\
+		Initialization prior to training		- initNewSearch\
+						- initTrainingCounts\
+						- initTrainingCountsFor:\
+						- initTrainingFileFor:\
+\
+		Running the algorithm		- recognitionStepWithProbs:\
+						- recognitionStepWithFloatProbs:\
+						- recognitionStepWithIndices:\
+						- initialTrainingStepFor:state:codebookIndices:\
+						- initialTrainingStepFor:state:\
+\
+		Setting parameters			- setForcedModel:\
+						- setForced:\
+						- setProbabilityScale:codebook:\
+						- setNumberModelStates:\
+\
+		Getting parameters			- getBestModel\
+						- getBestBackTrace\
+						- getBestScore\
+						- getModel:\
+						- getFrameCount\
+						- getNumberCodebooks\
+						- getNumberStates\
+						- getNumberModels\
+						- isForced\
+						- numberInputProbabilities\
+						- probabilityScaleForCodebook:\
+						- stateProbabilities\
+\
+		Updating the models		- updateInitialModels\
+						- updateInitialModel:\
+						- addSkipStateFor:\
+\
+		Saving/Reading to file		- saveProbabilitiesToFile:model:\
+						- readProbabilitiesFromFile:model:\
+						- saveProbabilitScaleToFile:\
+						- readProbabilityScaleFromFile:\
+						- printAllModelsTo:\
+						- printModel:to:\
+\
+	INSTANCE METHODS
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b addSkipStateFor:\
+		- addSkipStateFor:
+\b0 (int)
+\i model
+\i0 \
+\
+		Call this method after stepping through the initial training and prior to updating the initial model.  It adds counts to the state\
+		transition counter to effect a skip state.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b allocateArrays\
+		- allocateArrays
+\b0 \
+\
+		Allocates instance variable arrays.  This is a local method, should not be called by user.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b free
+\b0 \
+		- 
+\b free
+\b0 \
+	\
+		Frees the object and its allocated arrays.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b freeArrays\
+		- freeArrays
+\b0 \
+\
+		Frees instance variable arrays.  This is a local method, should not be called by user.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b getBestBackTrace
+\b0 \
+		- (int *)
+\b getBestBackTrace
+\b0 \
+	\
+		Returns the back trace of the current best model.  NOTE: you must first call 
+\b getBestModel
+\b0  before calling this method.\
+\
+		see also, 
+\b getBestModel.
+\b0 \
+\
+\
+	
+\b getBestModel
+\b0 \
+		- (int)
+\b getBestModel
+\b0 \
+	\
+		Returns the number of the current best model.  Note that we can then send a message to the best model asking for its\
+		parameters (e.g., its word).\
+\
+		see also, 
+\b getBestBackTrace.
+\b0 \
+\
+\
+	
+\b getBestScore
+\b0 \
+		- (int)
+\b getBestModel
+\b0 \
+	\
+		Returns the probability score of the best model.  NOTE: you must first call 
+\b getBestModel
+\b0  before calling this method.\
+\
+		see also, 
+\b getBestBackTrace.
+\b0 \
+\
+\
+	
+\b getFrameCount\
+		- 
+\b0 (int)
+\b getFrameCount
+\b0 \
+\
+		Returns the number of speech frames that have occurred during recognition of the current word.\
+\
+\
+	
+\b getModel\
+		- 
+\b0 (id)
+\b getModel:
+\b0 (int)
+\i model
+\i0 \
+\
+		Returns a pointer to the model object whose index is 
+\i model
+\i0 .\
+\
+\
+	
+\b getNumberCodebooks\
+		- 
+\b0 (int)
+\b getNumberCodebooks
+\b0 \
+\
+		Returns the number of codebooks we are using.  For example, three for cepstral, delta cepstral, and delta energy.\
+\
+	\
+	
+\b getNumberStates
+\b0 \
+		- (int)
+\b getNumberStates
+\b0 \
+\
+		Returns the number of states in each model, that is, the model length.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+	\
+	
+\b getNumberModels
+\b0 \
+		- (int)
+\b getNumberModels
+\b0 \
+\
+		Returns the number of models.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+	\
+	
+\b initialTrainingStepFor:state:codebookIndices:
+\b0 \
+		- 
+\b initialTrainingStepFor:
+\b0 (int)
+\i model
+\b\i0  state:
+\b0 (int)
+\i state
+\b\i0  codebookIndices:
+\b0 (short *)
+\i indices
+\i0 \
+\
+		This method steps the given model by giving it the current state, and the set of codebook indices.  The model then updates its\
+		probability counters accordingly.  Note that this method can be used during initial training when the states are evenly divided\
+		across the speech data, as well as during Viterbi training when the states are gotten from the Viterbi backtrace.\
+\
+\
+	
+\b initialTrainingStepFor:state:
+\b0 \
+		- 
+\b initialTrainingStepFor:
+\b0 (int)
+\i model 
+\b\i0 state:
+\b0 (int)
+\i state
+\i0   
+\b finalFrame:
+\b0 (BOOL)
+\i flag
+\i0 \
+	\
+		This method steps the given model by giving it the current state.  It differs from the method above in that the one above has\
+		codebook indices as input to the HMM.  The model then updates its probability counters accordingly.  Set 
+\i flag
+\i0  if this is the\
+		final frame in the file.  Note that this method can be used during initial training when the states are evenly divided across the\
+		speech data, as well as during Viterbi training when the states are gotten from the Viterbi backtrace.\
+\
+\
+	
+\b initNewSearch
+\b0 \
+		- 
+\b initNewSearch
+\b0 \
+	\
+		This method initializes the models for a new Viterbi search.\
+\
+\
+	
+\b initTrainingCounts
+\b0 \
+		-
+\b initTrainingCounts
+\b0 \
+\
+		Initializes the probability counters in all the models.\
+\
+\
+	
+\b initTrainingCountsFor:
+\b0 \
+		- 
+\b initTrainingCountsFor:
+\b0 (int)
+\i model\
+
+\i0 \
+		Initializes the probability counters for the model, 
+\i model.
+\i0 \
+
+\i 	
+\i0 \
+\
+	
+\b initTrainingFileFor:
+\b0 \
+		- 
+\b initTrainingFileFor:
+\b0 (int)
+\i model
+\i0 \
+	\
+		This method tells the indicated model that we got a new training file, so get ready to start at state 0.\
+\
+\
+	
+\b initWithNumberModels:numberStates:numberCodebooks:codebookDimensions: codebookWeights:zone::
+\b0 \
+		- 
+\b initWithNumberModels:
+\b0 (int)
+\i models
+\b\i0  numberStates:
+\b0 (int)
+\i states
+\b\i0  numberCodebooks:
+\b0 (int)
+\i codebooks
+\b\i0 \
+		        codebookDimensions:
+\b0 (int*)
+\i dimensions
+\b\i0  codebookWeights:
+\b0 (float *)
+\i weights
+\b\i0  zone:
+\b0 (NXZone *)
+\i myZone
+\i0 \
+	\
+		This method initializes the object with the given number of models, with each model having the given number of states.  Set\
+		
+\i codebooks
+\i0  equal to the number of codebooks feeding the HMM.  If the HMM is used with codebook indices as inputs, set\
+		
+\i dimensions
+\i0  equal to the sizes of the codebooks, e.g., \{256, 256, 32\}, otherwise set 
+\i dimensions
+\i0  equal to NULL.  The 
+\i weights
+\i0 \
+		are used in weighting the probabilities from each codebook.  These are used both when codebook indices are used, and when\
+		the VQ supplies the observation probabilities.  Finally, the user supplies the 
+\i zone
+\i0  in memory from which this object allocates\
+		its arrays.  This should help in efficiently using memory.\
+\
+\
+	
+\b isForced
+\b0 \
+		- (BOOL)
+\b isForced
+\b0 \
+\
+		Returns YES if the HMM is in forced (training) mode, otherwise returns NO.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b numberInputProbabilities
+\b0 \
+		- (int)
+\b numberInputProbabilities
+\b0 \
+\
+		Returns the number of elements in the probability scaling array.  Is equal to the numberModels times the numberStates.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b printAllModelsTo:\
+		- 
+\b0 (BOOL)
+\b printAllModelsTo:
+\b0  (char *)
+\i fileName
+\b\i0 \
+
+\b0 \
+		Prints a summary of all the models to the file.  Returns YES if able to write to the file.\
+\
+\
+	
+\b printModel:To:\
+		- 
+\b0 (BOOL)
+\b printModel:
+\b0 (int)
+\i model 
+\b\i0 to:
+\b0 (char *)
+\i fileName
+\b\i0  \
+
+\b0 	\
+		Prints a summary of the specified model to the file.  Returns YES if able to write to the file.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b probabilityScaleForCodebook:\
+		- 
+\b0 (float *)
+\b probabilityScaleForCodebook:
+\b0 (int)
+\i number
+\b\i0  \
+
+\b0 	\
+		Returns the probability scaling for the input codebook.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b readProbabilitiesFromFile:model:\
+		- 
+\b0 (BOOL)
+\b readProbabilitiesFromFile:
+\b0 (char *)
+\i fileName
+\b\i0  model:
+\b0 (int)
+\i model
+\i0 \
+\
+		Reads in stored probabilities into a model.  Returns YES if able to read in the probabilities.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b readProbabilityScaleFromFile:\
+		- 
+\b0 (BOOL)
+\b readProbabilitiesFromFile:
+\b0 (char *)
+\i fileName
+\i0 \
+\
+		Reads in the probability scale factors.  Returns YES if able to read in the probabilities.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b recognitionStepWithFloatProbs:\
+		- recognitionStepWithProbs:
+\b0 (float *)
+\i inputProbabilities
+\i0 \
+\
+		Steps the Viterbi algorithm with a single set of state probabilities.  These probabilities are assumed to come from a floating\
+		point reverse flow feature map with the probabilities scaled by probabilityScale.  If in forcedViterbi mode, then only the\
+		forced model is stepped.\
+\
+\
+	
+\b recognitionStepWithIndices:\
+		- recognitionStepWithIndices:
+\b0 (int *)indices\
+\
+		Steps the Viterbi algorithm with a single set of codebook indices (one index for each codebook).  If in forcedViterbi mode,\
+		then only the forced model is stepped.\
+\
+\
+	
+\b recognitionStepWithProbs:\
+		- recognitionStepWithProbs:
+\b0 (int *)
+\i inputProbabilities
+\i0 \
+\
+		Steps the Viterbi algorithm with a single set of state probabilities.  These probabilities are assumed to come from a fixed point\
+		reverse flow feature map with the probabilities scaled by probabilityScale.  If in forcedViterbi mode, then only the forced\
+		model is stepped.\
+\
+\
+	
+\b saveProbabilitiesToFile:model:\
+		- 
+\b0 (BOOL)
+\b saveProbabilitiesToFile:
+\b0 (char *)
+\i fileName
+\b\i0  model:
+\b0 (int)
+\i model
+\i0 \
+\
+		Saves 
+\i model
+\i0 's probabilities to a file.  Returns YES if able to save the probabilities.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b saveProbabilityScaleToFile:\
+		- 
+\b0 (BOOL)
+\b saveProbabilitiesToFile:
+\b0 (char *)
+\i fileName
+\i0 \
+\
+		Saves the probability scale factors to a file.  Returns YES if able to save the probabilities.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b setForced\
+		- setForced
+\b0 \
+\
+		Sets the HMM into the forced (training) mode of operation.\
+\
+\
+	
+\b setForcedModel:\
+		- setForcedModel:
+\b0 (int)
+\i model
+\i0 \
+\
+		Sets the model number for future training if in forced (training) mode.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b setNumberModelStates:\
+		- setNumberModelStates:
+\b0 (int)
+\i states
+\i0 \
+\
+		Sets a new number of states per model.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b setProbabilityScale:codebook:\
+		- setProbabilityScale:
+\b0 (float *)
+\i scale 
+\b\i0 codebook:
+\b0 (int)
+\i number
+\i0 \
+\
+		Sets the probability scale factor for probability inputs from a feature map, for one of the codebooks (feature maps).\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b stateProbabilities\
+		- 
+\b0 (float *)
+\b stateProbabilities
+\b0 \
+\
+		Returns the probabilities of all the states in all the models.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b updateInitialModels\
+		- updateInitialModels
+\b0 \
+\
+		Updates the probabilities of all the models. Should be called after stepping through all the training files using,\
+		
+\b initialTrainingStepFor:state:codebookIndices:
+\b0 .  Also, normalizes the probabilities as well as taking their logs.\
+\
+\
+	
+\b updateInitialModel:\
+		- 
+\b0  
+\b updateInitialModel:
+\b0 (int)
+\i model
+\i0 \
+\
+		Updates the probabilities of the given model.  Should be called after stepping through all the training files using,\
+		
+\b initialTrainingStepFor:state:codebookIndices:
+\b0 .  Also, normalizes the probabilities as well as taking their logs.\
+
+}

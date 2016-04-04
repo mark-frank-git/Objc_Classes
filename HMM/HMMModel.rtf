@@ -1,0 +1,397 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Ohlfs;}
+\paperw16720
+\paperh9400
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	HMMModel\
+	\
+		
+\b0\fs28 INHERITS FROM			Object
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			HMMModel.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The HMMModel class implements one of the models in the Viterbi search algorithm.  This object can only be used for\
+		recognition, for training the models see the subclass, ViterbiModel.\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from Object	
+\i0 	Class	isa;\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in HMMModel	
+\i0 	
+\fc1\cf1 int	modelLength;\
+						int	*modelStates;\
+						int	*backTrace;\
+						int	bestModelEnd\
+						int	codebooks;\
+						int	*psi[MAX_FRAMES];\
+						int	*codebookDimensions;\
+						int	oldState;\
+						int	maxFrames;\
+						float	*codebookWeights;\
+						float	*logPiInitial;\
+						float	*logPiFinal;\
+						float	**logA;\
+						float	***logB;\
+						float	*stateProbability;\
+						float	*maxProbability;\
+						double	maxScore;\
+						BOOL	useCodebookIndices;\
+						char	modelDescription[MAX_NAME];\
+						NXZone	*myZone;\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			modelLength			length of this model\
+			modelStates			array of states for this model\
+			backTrace			Viterbi back trace\
+			bestModelEnd			the best (highest probability) ending state\
+			codebooks			number of codebooks used\
+			psi			array for determining the Viterbi back trace\
+			codebookDimensions		size of each of the codebooks\
+			oldState			last state we were in during training\
+			maxFrames			maximum # of frames seen in any word so far\
+			codebookWeights		weights given to each of the codebooks during recognition\
+			logPiInitial			log of the initial state probabilities\
+			logPiFinal			log of the final state probabilities\
+			logA			log of the state transition probabilities\
+			logB			log of the observation probabilities for each codebook\
+			stateProbability		current probability score during Viterbi search\
+			maxProbability		the maximum input probabilities during Viterbi\
+			maxScore			the best probability score for this model\
+			useCodebookIndices		if YES, use codebook indices, else use input observation probabilities\
+			modelDescription		name of this model\
+			myZone			zone for allocating arrays\
+
+\fc1\cf1 \
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- initWithLength:name:states:codebooks:weights: zone:\
+						- free\
+						- allocateArrays\
+						- freeArrays\
+						- initCodebookDimensions:withWeights:\
+\
+		Initialization prior to recognition	- initNewSearch\
+\
+		Running the algorithm		- recognitionStepWithProbs:count:\
+						- recognitionStepWithIndices:count:\
+\
+		Getting parameters			- getBackTrace:\
+						- getModelDescription\
+						- getModelLength\
+						- getModelScore:\
+						- getLastScore\
+						- getFinalProbabilities\
+						- getInitialProbabilities\
+						- getTransitionProbabilities\
+						- stateProbability\
+\
+		Setting parameters			- setModelLength:states:\
+\
+		Saving/Reading to file		- saveProbabilitiesToFile:\
+						- readProbabilitiesFromFile:\
+						- printModel:\
+\
+	INSTANCE METHODS
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b allocateArrays
+\b0 \
+		- 
+\b allocateArrays
+\b0 \
+\
+		This is an internal method which is called from the initialization routine.  Do not use.\
+\
+\
+	
+\b free
+\b0 \
+		- 
+\b free
+\b0 \
+	\
+		Frees the object and its allocated arrays.\
+\
+\
+	
+\b freeArrays
+\b0 \
+		- 
+\b freeArrays
+\b0 \
+	\
+		Frees the allocated arrays.  This is a local method, and should not be called directly.\
+\
+\
+	
+\b getBackTrace
+\b0 \
+		- (int *)
+\b getBackTrace:
+\b0 (int)
+\i frameCount
+\i0 \
+	\
+		Returns the back trace of the receiving model.  NOTE: you must first call 
+\b getModelScore
+\b0  before calling this method.\
+\
+		see also, 
+\b getModelScore.
+\b0 \
+\
+\
+	
+\b getFinalProbabilities
+\b0 \
+		- (float *)
+\b getFinalProbabilities
+\b0 \
+	\
+		Returns the final state probabilities.\
+\
+		see also, 
+\b getInitialProbabilities, getTransitionProbabilities.
+\b0 \
+\
+\
+	
+\b getInitialProbabilities
+\b0 \
+		- (float *)
+\b getInitialProbabilities
+\b0 \
+	\
+		Returns the initial state probabilities.\
+\
+		see also, 
+\b getFinalProbabilities, getTransitionProbabilities.
+\b0 \
+\
+\
+	
+\b getLastScore
+\b0 \
+		- (double)
+\b getModelScore
+\b0 \
+	\
+		Returns the last probability score for this model.\
+\
+		see also, 
+\b getModelScore.
+\b0 \
+\
+\
+	
+\b getModelDescription\
+		- 
+\b0 (char *)
+\b getModelDescrption
+\b0 \
+\
+		Returns a character string describing the model.\
+\
+\
+	
+\b getModelLength\
+		- 
+\b0 (int)
+\b getModelLength
+\b0 \
+\
+		Returns the model's length (number of states).\
+\
+\
+	
+\b getModelScore\
+		- 
+\b0 (double)
+\b getModelScore
+\b0 \
+\
+		Calculates and returns the model's current probability output.\
+\
+\
+	
+\b getTransitionProbabilities
+\b0 \
+		- (float *)
+\b getTransitionProbabilities
+\b0 \
+	\
+		Returns the state transition probabilities.\
+\
+		see also, 
+\b getFinalProbabilities, getInitialProbabilities.
+\b0 \
+\
+\
+	
+\b initCodebookDimensions:withWeights:
+\b0 \
+		-
+\b  initCodebookDimensions:
+\b0 (int *)
+\i dimensions
+\i0  
+\b withWeights:
+\b0 (float *)
+\i weights
+\i0 \
+\
+		This method should be called immediately after 
+\b initWithLength:name:states:codbooks:zone:
+\b0  if this object is being used in\
+		the mode where its inputs are codebook indices.  This method allocates the appropriate arrays for the codebooks.\
+\
+\
+	
+\b initNewSearch
+\b0 \
+		- 
+\b initNewSearch
+\b0 \
+	\
+		This method initializes the model for a new Viterbi search.\
+\
+\
+	
+\b initWithLength:name:states:codebooks:zones:
+\b0 \
+		- 
+\b initWithLength:
+\b0 (int)
+\i length
+\b\i0  name:
+\b0 (char *)
+\b name states:
+\b0 (int *)
+\i states
+\b\i0  codebooks:
+\b0 (int)
+\i numberCodebooks
+\b\i0  \
+		                   weights:
+\b0 (float *)
+\i weights
+\b\i0  zone:
+\b0 (NXZone *)
+\i zone
+\i0 \
+	\
+		This method initializes the object with the given 
+\i length
+\i0  (number of states), given 
+\i name
+\i0 , given 
+\i states
+\i0 , given 
+\i numberCodebooks
+\i0 ,\
+		given codebook weights, and the zone for efficiently allocating arrays.\
+\
+\
+	
+\b printModel\
+		- printModel
+\b0 :(FILE *)
+\i stream
+\b\i0 \
+
+\b0 \
+		Prints a detailed description of the model to stream.\
+\
+\
+	
+\b readProbabilitiesFromFile:\
+		- 
+\b0 (BOOL)
+\b readProbabilitiesFromFile:
+\b0 (FILE *)
+\i stream
+\i0 \
+\
+		Reads in stored probabilities into a model.  Returns YES if able to read in the probabilities.\
+\
+\
+	
+\b recognitionStepWithIndices:count:\
+		- recognitionStepWithIndices:
+\b0 (int *)indices 
+\b count:
+\b0 (int)
+\i frameCount
+\i0 \
+\
+		Steps the Viterbi algorithm with a single set of codebook indices (one index for each codebook).  frameCount is the current\
+		frame count in the word.\
+\
+\
+	
+\b recognitionStepWithProbs:count:\
+		- recognitionStepWithProbs:
+\b0 (double **)
+\i logProbabilities
+\i0  
+\b count:
+\b0 (int)
+\i frameCount
+\i0 \
+\
+		Steps the Viterbi algorithm with a single set of state probabilities.  The first index in the two dimensional array\
+		logProbabilities is the codebook number.  
+\i frameCount
+\i0  is the current frame count in the word.\
+\
+\
+	
+\b saveProbabilitiesToFile:\
+		- 
+\b0 (BOOL)
+\b saveProbabilitiesToFile:
+\b0 (FILE *)
+\i stream
+\i0 \
+\
+		Saves all the model's probabilities to file.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b setModelLength:states:\
+		- setModelLength:
+\b0 (int)
+\i length 
+\b\i0 states:
+\b0 (int *)
+\i states
+\i0 \
+\
+		Sets a new length (# of states) for the model, and the states corresponding to this new length.\
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b stateProbability\
+		- 
+\b0 (float **)
+\b stateProbability
+\b0 \
+\
+		Returns the two dimensional state probability score.
+}

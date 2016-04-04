@@ -1,0 +1,1092 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f2\fmodern Courier;}
+\paperw19200
+\paperh13700
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	SpeechProcessor\
+	\
+		
+\b0\fs28 INHERITS FROM			Object
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			SpeechProcessor.h\
+\
+		CLASS DESCRIPTION\
+		\
+		This object is a subclass of Object.  It provides processing of speech signals.  Some of the code originated from Bill Kushner of\
+		CSRL.\
+\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from Object
+\i0 		Class	isa;\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in SpeechProcessor
+\i0 	
+\fc1\cf1 int	spectralType;\
+						int	windowType;\
+						int	lifterType;\
+						int	lpcOrder;\
+						int	cepstralLength;\
+						int	frameLength;\
+						int	overlapLength;\
+						int	powerOf2Length;\
+						int	numberFilterBanks;\
+						int	numberFrames;\
+						int	spectralLength;\
+						int	*speechOrNoise;\
+						BOOL	perceptualProcessing;\
+						BOOL	spectralSubtraction;\
+						float	samplingFrequency;\
+						float	foldingFrequency;\
+						float	*window;\
+						float	*lifter;\
+						float	*spectralData;\
+						float	*ptpData;\
+						float	*zeroCrossData;\
+						float	*energyData;\
+						float	*filterBanks;\
+						float	*loudnessWeighting;\
+						float	*centerFrequencies;\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+	\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			
+\fc1\cf1 spectralType			indicates type of spectral processing to be performed, see below for a list of types\
+			windowType			the type of speech windowing function, see below for a list of windows\
+			lifterType			the type of cepstral liftering to be performed, see below for a list of lifters\
+			lpcOrder			the order of the LPC analyzing filter\
+			cepstralLength		the number of cepstral coefficients to calculate, the zeroth coefficient is not used\
+			frameLength			the length of the speech data to be processed each frame\
+			overlapLength			the overlap between successive frames of speech\
+			powerOf2Length		the minimum power of 2 greater than or equal to frameLength\
+			numberFilterBanks		the number of filter banks to be used when using perceptual processing\
+			numberFrames		the number of frames in the current speech file\
+			spectralLength		the length of the spectral portion of the feature vector, e.g., for cepstral processing this is equal to\
+						cepstral length\
+			speechOrNoise		an array of integers where each element in the array indicates whether the corresponding frame was\
+						determined to be speech (1), or noise (0)\
+			perceptualProcessing		if YES, perform perceptual spectral processing, otherwise perform normal linear processing\
+			spectralSubtraction		if YES, perform spectral subtraction to attempt to remove an estimate of the noise spectrum from the\
+						noisy speech spectrum\
+			samplingFrequency		the frequency in Hz at which the input speech was sampled\
+			foldingFrequency		the Nyquist rate equal to half the sampling frequency\
+			window			the speech windowing function\
+			lifter			the cepstral liftering function\
+			spectralData			the output of the spectral processing on a frame-by-frame basis\
+			ptpData			the output of the peak-to-peak processing on a frame-by-frame basis\
+			zeroCrossData		the output of the zero crossing processing on a frame-by-frame basis\
+			energyData			the output of the frame energy processing on a frame-by-frame basis\
+			filterBanks			used locally for modeling the perceptrual filter banks\
+			loudnessWeighting		used locally for modeling the perceptrual filter banks\
+			centerFrequencies		used locally for modeling the perceptrual filter banks\
+\
+	\
+		METHOD TYPES\
+		\
+		Initializing			- initWithOrder:cepstralLength:frameLength:overlapLength:numberBanks:samplingFrequency:\
+						- inititializeSpectralLength\
+						- initializeWindows\
+						- initializeFilterBanks\
+\
+		Setting parameters			- setSpectralType:\
+						- setWindow:\
+						- setLifter:\
+						- setLPCFilterOrder:\
+						- setCepLength: \
+						- setSpeechFrameLength:\
+						- setOverlapLength:\
+						- setNumberFilterBanks:\
+						- setPerceptualProcessing:\
+						- setSpectralSubtraction:\
+						- setSamplingFrequency:\
+\
+		Getting parameters			- spectralType\
+						- windowType\
+						- lifterType\
+						- lpcOrder\
+						- cepstralLength\
+						- frameLength\
+						- overlapLength\
+						- powerOf2Length\
+						- numberFilterBanks\
+						- numberFrames\
+						- spectralLength\
+						- speechOrNoise\
+						- perceptualProcessing\
+						- spectralSubtraction\
+						- windowData\
+						- lifterData\
+						- spectralData\
+						- ptpData\
+						- zeroCrossData\
+						- energyData\
+						- samplingFrequency\
+						- spectralName\
+						- lifterName\
+						- windowName\
+						- frequencyAnalysisName\
+\
+		Speech Processing Methods		- calculateSpectralData:start:length:\
+						- calculatePTPData:start:length:\
+						- calculateZeroCrossData:start:length:\
+						- calculateEnergyData:start:length:\
+						- windowSpeechData:length:\
+						- powerSpectrumOf:length:frameEnergy:spectralCenter:\
+						- powerSpectrumFromAuto:length:\
+						- filterBankOutputs:length:\
+						- autoFromFilterBanks:length:\
+						- autoFromSpeech:length:lagLength:\
+						- lpcFromAuto:order:window:\
+						- cepstralFromAuto:lpcOrder:length:\
+						- cepstralFromLPC:lpcOrder:length:\
+						- cepstralFromSpectrum:length:\
+						- speechOrNoise:spectralCenter:frame:\
+						- subtractNoiseFrom:noise:speechFlag:length:frameEnergy:\
+\
+\
+	INSTANCE METHODS\
+\
+	
+\b autoFromFilterBanks:length:
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- (float *)
+\b autoFromFilterBanks:
+\b0 (float *)
+\i filterOutputs 
+\b\i0 length:
+\b0 (int)
+\i length
+\i0 \
+\
+		This method finds and returns the autocorrelation from the perceptual filter bank outputs by using an inverse FFT.  This is a local method,\
+		and should not be called directly.\
+\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 	
+\b autoFromSpeech:length:lagLength:
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- (float *)
+\b autoFromSpeech:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length 
+\b\i0 lagLength:
+\b0 (int)
+\i lagLength
+\i0 \
+\
+		This method finds and returns the autocorrelation of a set of speech samples.  It is used locally by some methods, but can be called directly.\
+\
+\
+	
+\b calculateEnergyData:length:\
+		- 
+\b0 (float *)
+\b calculateEnergyData:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length
+\i0 \
+\
+		Calculates the energy of the speech on a frame-by-frame basis.  Returns the calculated energy.\
+\
+		see also, 
+\b setSpeechFrameLength, setOverlapLength.
+\b0 \
+\
+\
+	
+\b calculatePTPData:length:\
+		- 
+\b0 (float *)
+\b calculatePTPData:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length
+\i0 \
+\
+		Calculates the peak-to-peak values of the speech on a frame-by-frame basis.  Returns the peak-to-peak data.\
+\
+		see also, 
+\b setSpeechFrameLength, setOverlapLength.
+\b0 \
+\
+\
+	
+\b calculateSpectralData:length:\
+		- 
+\b0 (float *)
+\b calculateSpectralData:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length
+\i0 \
+\
+		Calculates the spectral data for the speech on a frame-by-frame basis.  Returns an array of spectral vectors.  The type of spectral data returns\
+		depends on the instance variables, 
+\i spectralType, perceptualProcessing, spectralSubtraction, 
+\i0 etc.\
+\
+		see also, 
+\b setSpectralType, setWindow, setLifter, setLPCFilterOrder, setCepLength, setSpeechFrameLength, setNumberFilterBanks,\
+		setPerceptualProcessing, setSpectralSubtraction.
+\b0 \
+\
+\
+	
+\b calculateZeroCrossData:length:\
+		- 
+\b0 (float *)
+\b calculateZeroCrossData:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length
+\i0 \
+\
+		Calculates the zero crossing rate of the speech on a frame-by-frame basis.  Returns the zero crossing rate.\
+\
+		see also, 
+\b setFrameLength, setOverlapLength.
+\b0 \
+\
+\
+	
+\b cepstralFromAuto:lpcOrder:length:\
+		- 
+\b0 (float *)
+\b cepstralFromAuto:
+\b0 (float *)
+\i autoCorrelation 
+\b\i0 lpcOrder:
+\b0 (int)
+\i order 
+\b\i0 length:
+\b0 (int)
+\i outputLength
+\i0 \
+\
+		Calculates the cepstral coefficients from the autocorrelation function of the speech data.  Specify the order of the LPC analyzing filter, and the\
+		number of cepstral coefficients desired (i.e., 
+\i outputLength 
+\i0 ).  This is normally a local method, but may be called directly.\
+\
+		see also, 
+\b cepstralFromLPC:lpcOrder:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b cepstralFromLPC:lpcOrder:length:\
+		- 
+\b0 (float *)
+\b cepstralFromLPC:
+\b0 (float *)
+\i lpcCoefficients 
+\b\i0 lpcOrder:
+\b0 (int)
+\i order 
+\b\i0 length:
+\b0 (int)
+\i outputLength
+\i0 \
+\
+		Calculates the cepstral coefficients from the LPC filter coefficients.  Specify the order of the LPC analyzing filter, and the number of cepstral\
+		coefficients desired (i.e., 
+\i outputLength 
+\i0 ).  This is normally a local method, but may be called directly.\
+\
+		see also, 
+\b cepstralFromAuto:lpcOrder:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b cepstralFromSpectrum:length:\
+		- 
+\b0 (float *)
+\b cepstralFromSpectrum:
+\b0 (float *)
+\i spectrum 
+\b\i0 length:
+\b0 (int)
+\i outputLength
+\i0 \
+\
+		Calculates the cepstral coefficients from the power spectrum.  Specify the number of cepstral\
+		coefficients desired (i.e., 
+\i outputLength 
+\i0 ).  This is normally a local method, but may be called directly.\
+\
+		see also, 
+\b cepstralFromAuto:lpcOrder:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b cepstralLength\
+		- 
+\b0 (int)
+\b cepstralLength
+\b0 \
+\
+		Returns the number of cepstral coefficients found when calculating spectral data.\
+\
+		see also, 
+\b calculateSpectralData:start:length:, setCepLength:, setSpectralType:.
+\b0 \
+\
+\
+	
+\b energyData\
+		- 
+\b0 (float *)
+\b energyData
+\b0 \
+\
+		Returns the frame energy on a frame-by-frame basis.  Must first call 
+\b calculateEnergyData:start:length:
+\b0 , to find the energy data.\
+\
+		see also, 
+\b calculateEnergyData:start:length:.
+\b0 \
+\
+\
+	
+\b filterBankOutputs:length:\
+		- 
+\b0 (float *)
+\b filterBankOutputs:
+\b0 (float *)
+\i powerSpectrum 
+\b\i0 length:
+\b0 (int)
+\i length \
+
+\i0 \
+		Finds the perceptual filter bank output energies from the power spectrum.  This is a local method, and probably should not be called directly.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b frameLength\
+		- 
+\b0 (int)
+\b frameLength
+\b0 \
+\
+		Returns the length of speech data over which to do processing.  Affects all the speech processing methods.\
+\
+		see also, 
+\b setSpeechFrameLength:.
+\b0 \
+\
+\
+	
+\b frequencyAnalysisName\
+		- 
+\b0 (char *)
+\b frequencyAnalysisName
+\b0 \
+\
+		Returns the name of the frequency analysis type.  See below for a list of types.\
+\
+		see also, 
+\b setPerceptualProcessing:.
+\b0 \
+\
+\
+	
+\b initializeFilterBanks\
+		- initializeFilterBanks
+\b0 \
+\
+		A local method for initializing the number of perceptual filter banks.  Should not be called directly.\
+\
+\
+	
+\b initializeSpectralLength\
+		- initializeSpectralLength
+\b0 \
+\
+		A local method used for the initialization involved when changing the spectral data processing.  Should not be called directly.\
+\
+\
+	
+\b initWithOrder:cepstralLength:\
+		- initWithOrder:
+\b0 (int)
+\i order 
+\b\i0 cepstralLength:
+\b0 (int)
+\i clength 
+\b\i0 frameLength:
+\b0 (int)
+\i flength 
+\b\i0 overlapLength:
+\b0 (int)
+\i olength\
+			                                      
+\b\i0 numberBanks:
+\b0 (int)
+\i numberBanks  
+\b\i0 samplingFrequency:
+\b0 (int)
+\i frequency
+\i0 \
+\
+		Initializes a new instance of the SpeechProcessor class with the specified LPC order, cepstral length, frame and overlap length, number of\
+		perceptual filter banks, and sampling frequency.\
+\
+		see also, 
+\b cepstralFromAuto:lpcOrder:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b initializeWindows\
+		- initializeWindows
+\b0 \
+\
+		A local method used for the initialization involved when changing the speech windowing, or cepstral liftering.  Should not be called directly.\
+\
+\
+	
+\b lifterData\
+		- 
+\b0 (float *)
+\b lifterData
+\b0 \
+\
+		This method returns the cepstral liftering function.\
+\
+		see also, 
+\b setLifter:.
+\b0 \
+\
+\
+	
+\b lifterName\
+		- 
+\b0 (char *)
+\b lifterName
+\b0 \
+\
+		Returns the name of the cepstral lifter.  See below for a list of types.\
+\
+		see also, 
+\b setLifter:.
+\b0 \
+\
+\
+	
+\b lifterType\
+		- 
+\b0 (int)
+\b lifterType
+\b0 \
+\
+		Returns the type of the cepstral lifter.  See below for a list of types.\
+\
+		see also, 
+\b setLifter:.
+\b0 \
+\
+\
+	
+\b lpcFromAuto:order:\
+		- 
+\b0 (float *)
+\b lpcFromAuto:
+\b0 (float *)
+\i autoCorrelation 
+\b\i0 order:
+\b0 (int)
+\i order
+\i0 \
+\
+		Calculates the LPC filter coefficients from the autocorrelation function of the speech data.  Specify the order of the LPC analyzing filter.  This is\
+		normally a local method, but may be called directly.\
+\
+		see also, 
+\b cepstralFromLPC:lpcOrder:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b lpcOrder\
+		- 
+\b0 (int)
+\b lpcOrder
+\b0 \
+\
+		Returns the order of the LPC analyzing filter.\
+\
+		see also, 
+\b setLPCFilterOrder:.
+\b0 \
+\
+\
+	
+\b numberFilterBanks\
+		- 
+\b0 (int)
+\b numberFilterBanks
+\b0 \
+\
+		Returns the number of perceptual filter banks used in the spectral processing.\
+\
+		see also, 
+\b  calculateSpectralData:start:length:, setNumberFilterBanks:.
+\b0 \
+\
+\
+	
+\b numberFrames\
+		- 
+\b0 (int)
+\b numberFrames
+\b0 \
+\
+		Returns the number of frames in the current speech file.  No calculations are done in this method.  The number of frames is calculated in \
+		
+\b calculateSpectralData:start:length:, calculateEnergyData:start:length:, calculatePTPData:start:length:,\
+		calculateZeroCrossData:start:length:.
+\b0 \
+\
+		see also, 
+\b  setFrameLength:, setOverlapLength:.
+\b0 \
+\
+\
+	
+\b overlapLength\
+		- 
+\b0 (int)
+\b overlapLength
+\b0 \
+\
+		Returns the number of speech samples to overlap when processing.\
+\
+		see also, 
+\b  setOverlapLength:.
+\b0 \
+\
+\
+	
+\b perceptualProcessing\
+		- 
+\b0 (BOOL)
+\b perceptualProcessing
+\b0 \
+\
+		Returns a flag indicating whether or not perceptual filter banks are used in the speech processing.\
+\
+		see also, 
+\b  setPerceptualProcessing:.
+\b0 \
+\
+\
+	
+\b powerOf2Length\
+		- 
+\b0 (int)
+\b powerOf2Length
+\b0 \
+\
+		Returns the power of 2 greater than or equal to the frame length.\
+\
+		see also, 
+\b  setSpeechFrameLength:.
+\b0 \
+\
+\
+	
+\b powerSpectrumOf:length:frameEnergy:spectralCenter:\
+		- 
+\b0 (float *)
+\b powerSpectrumOf:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length 
+\b\i0 frameEnergy:
+\b0 (float *)
+\i frameEnergy 
+\b\i0 spectralCenter:
+\b0 (float *)
+\i scm
+\i0 \
+\
+		Calculates the power spectrum of a section of speech of length, 
+\i length
+\i0 .  Also returns the frame energy and the spectral center of mass.  This is\
+		normally a local method, but may be called directly.\
+\
+		see also, 
+\b cepstralFromLPC:lpcOrder:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b powerSpectrumFromAuto:length:\
+		- 
+\b0 (float *)
+\b powerSpectrumFromAuto:
+\b0 (float *)
+\i auto 
+\b\i0 length:
+\b0 (int)
+\i length
+\i0 \
+\
+		Calculates the power spectrum from the autocorrelation function.  The autocorrelation function is of length, 
+\i length
+\i0 , but is assumed to be symmetric\
+		about its midpoint.  NOTE: length must be a power of 2.  This is normally a local method, but may be called directly.\
+\
+		see also, 
+\b powerSpectrumOf:length:frameEnergy:spectralCenter:.
+\b0 \
+\
+\
+	
+\b ptpData\
+		- 
+\b0 (float *)
+\b ptpData
+\b0 \
+\
+		Returns the peak-to-peak on a frame-by-frame basis.  Must first call 
+\b calculatePTPData:start:length:
+\b0 , to find the peak-to-peak data.\
+\
+		see also, 
+\b calculatePTPData:start:length:, setSpeechFrameLength:, setOverlapLength:.
+\b0 \
+\
+\
+	
+\b samplingFrequency\
+		- 
+\b0 (float)
+\b samplingFrequency
+\b0 \
+\
+		Returns the frequency in Hertz at which the speech was sampled.\
+\
+		see also, 
+\b setSamplingFrequency:.
+\b0 \
+\
+\
+	
+\b setCepLength:\
+		- setCepLength:
+\b0 (int)
+\i length
+\i0 \
+\
+		Sets the number of cepstral coefficients desired.  Note that the zeroth order coefficient is not calculated.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b setLifter:\
+		- setLifter:
+\b0 (int)
+\i type
+\i0 \
+\
+		Sets the type of cepstral liftering to be used.  See below for a list of types.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b setNumberFilterBanks:\
+		- setNumberFilterBanks:
+\b0 (int)
+\i number
+\i0 \
+\
+		Sets the number of perceptual filter banks used during perceptual spectral processing.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b setOverlapLength:\
+		- setOverlapLength:
+\b0 (int)
+\i length
+\i0 \
+\
+		Sets the number of speech samples to overlap when processing a new frame.\
+\
+\
+	
+\b setPerceptualProcessing:\
+		- setPerceptualProcessing:
+\b0 (BOOL)
+\i flag
+\i0 \
+\
+		Sets whether to perform perceptual type spectral processing, or linear spectral processing.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b setSamplingFrequency:\
+		- setSamplingFrequency:
+\b0 (float)
+\i frequency
+\i0 \
+\
+		Sets the frequency in Hertz at which the speech was sampled.\
+\
+\
+	
+\b setSpectralSubtraction:\
+		- setSpectralSubtraction:
+\b0 (BOOL)
+\i flag
+\i0 \
+\
+		Sets whether or not an estimate of the noise spectrum should be subtracted from the noisy speech prior to spectral processing.\
+\
+		see also, 
+\b calculateSpectralData:start:length:, calculateEnergyData:start:length:.
+\b0 \
+\
+\
+	
+\b setSpectralType:\
+		- setSpectralType:
+\b0 (int)
+\i type
+\i0 \
+\
+		Sets the type of spectral processing.  See below for a list of types.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b setSpeechFrameLength:\
+		- setSpeechFrameLength:
+\b0 (int)
+\i length
+\i0 \
+\
+		Sets the number of samples in a speech frame.\
+\
+\
+	
+\b setWindow:\
+		- setWindow:
+\b0 (int)
+\i type
+\i0 \
+\
+		Sets the type of windowing function for the speech processing.  See below for a list of types.\
+\
+\
+	
+\b spectralData\
+		- 
+\b0 (float *)
+\b spectralData
+\b0 \
+\
+		Returns the spectral data on a frame-by-frame basis.  Must first call 
+\b calculateSpectralData:start:length:
+\b0 , to find the spectral data.\
+\
+		see also, 
+\b calculateSpectralData:start:length:, setSpeechFrameLength:, setOverlapLength:.
+\b0 \
+\
+\
+	
+\b spectralLength\
+		- 
+\b0 (int)
+\b spectralLength
+\b0 \
+\
+		Returns the length of the spectral data for each frame.  For example, if 
+\i spectralType 
+\i0 == LPC_CEPSTRUM, then this method would return\
+		the cepstral length.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b spectralName\
+		- 
+\b0 (char *)
+\b spectralName
+\b0 \
+\
+		Returns the name of the spectral processing.  See below for a list of types.\
+\
+		see also, 
+\b setSpectralType:.
+\b0 \
+\
+\
+	
+\b spectralSubtraction\
+		- 
+\b0 (BOOL)
+\b spectralSubtraction
+\b0 \
+\
+		Returns a flag indicating whether an estimate of the noise spectrum should be subtracted from the noisy speech prior to spectral processing..\
+\
+		see also, 
+\b  setSpectralSubtraction:.
+\b0 \
+\
+\
+	
+\b spectralType\
+		- 
+\b0 (int)
+\b spectralType
+\b0 \
+\
+		Returns the type of spectral processing.  See below for a list of types.\
+\
+		see also, 
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b speechOrNoise\
+		- 
+\b0 (int *)
+\b speechOrNoise
+\b0 \
+\
+		Returns an array which indicates speech (1), or noise (0) on a frame-by-frame basis.  No calculations are done in this method, you must first call\
+		
+\b calculateSpectralData:start:length:.
+\b0 \
+\
+		see also, 
+\b calculateSpectralData:start:length:, calculateSpectralData:start:length:.
+\b0 \
+\
+\
+	
+\b calculateSpectralData:start:length:\
+		- 
+\b0 (int)
+\b speechOrNoise:
+\b0 (float)
+\i frameEnergy 
+\b\i0 spectralCenter:
+\b0 (float)
+\i spectralCenter 
+\b\i0 frame:
+\b0 (int)
+\i frame
+\i0 \
+\
+		Classifies the current frame of speech data as speech or noise, given the frame energy and the spectral center of mass.  Returns a 1 if speech,\
+		zero if noise.  This is a local method, and should not be called directly.\
+\
+		see also, 
+\b speechOrNoise.
+\b0 \
+\
+\
+	
+\b subtractNoiseFrom:noise:speechFlag:length:frameEnergy:\
+		- subtractNoiseFrom:
+\b0 (float *)
+\i spectrum 
+\b\i0 noise:
+\b0 (float *)
+\i noiseSpectrum 
+\b\i0 speechFlag:
+\b0 (int)
+\i speech\
+		                   
+\b\i0           length:
+\b0 (int)
+\i length  
+\b\i0 frameEnergy:
+\b0 (float *)
+\i frameEnergy
+\i0 \
+\
+		Subtracts an estimate of the noise spectrum from the noisy speech spectrum.  This is a local method, and should not be called directly.\
+\
+		see also, 
+\b speechOrNoise:spectralCenter:frame:.
+\b0 \
+\
+\
+	
+\b windowData\
+		- 
+\b0 (float *)
+\b windowData
+\b0 \
+\
+		Returns the speech windowing function.  See below for a list of window types.\
+\
+		see also, 
+\b setWindow:.
+\b0 \
+\
+\
+	
+\b windowName\
+		- 
+\b0 (char *)
+\b windowName
+\b0 \
+\
+		Returns the name of the speech window function.  See below for a list of names.\
+\
+		see also, 
+\b setWindow:.
+\b0 \
+\
+\
+	
+\b windowSpeechData:length:\
+		- 
+\b0 (float *)
+\b windowSpeechData:
+\b0 (float *)
+\i speech 
+\b\i0 length:
+\b0 (int)
+\i length \
+
+\i0 \
+		Window the input speech data, using the previously selected window.  The window is of length, 
+\i frameLength.  
+\i0 The input speech length, 
+\i length, 
+\i0 \
+		should be greater than 
+\i frameLength. 
+\i0 \
+\
+		see also, 
+\b setWindow:.
+\b0 \
+\
+\
+	
+\b windowType\
+		- 
+\b0 (int)
+\b windowType
+\b0 \
+\
+		Returns the type of window function.  See below for a list of types.\
+\
+		see also, 
+\b setWindow:.
+\b0 \
+\
+\
+	
+\b zeroCrossData\
+		- 
+\b0 (float *)
+\b zeroCrossData
+\b0 \
+\
+		Returns the zero crossing data on a frame-by-frame basis.  Must first call 
+\b calculateZeroCrossData:start:length:
+\b0 , to find the zero cross data.\
+\
+		see also, 
+\b calculateZeroCrossData:start:length:, setSpeechFrameLength:, setOverlapLength:.
+\b0 \
+\
+\
+
+\pard\tx2600\fi-20\li2100\fc0\cf0 \
+CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\f2\fs24 	
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\fs28\fc1\cf1 \
+
+\fs24 // inputSoundType definitions:\
+		#define SPEECH_FROM_SND		0	/* From a .snd file		*/\
+		#define SPEECH_FROM_PRC		1	/* From a .prc file		*/\
+		#define SPEECH_FROM_WAV		2	/* From a NIST .wav file	*/\
+		#define SPEECH_FROM_MIKE		3	/* From NeXT microphone	*/\
+// cepstral liftering types\
+		#define NO_LIFTERING			0\
+		#define RAISED_SINE			1\
+		#define LINEAR			2\
+		#define GAUSSIAN			3\
+		#define EXPONENTIAL			4\
+// spectral processing types\
+		#define LPC_CEPSTRUM			0	/* Cepstral from LPC recursion 	*/\
+		#define CEPSTRUM			1	/* Cepstral from inverse FFT	*/\
+		#define LPC_SPECTRUM			2	/* LPC coefficients		*/\
+		#define SONOGRAM			3	/* Filter bank/FFT spectral energies*/\
+// speech window types\
+		#define HAMMING			0\
+		#define HANNING			1\
+		#define RECTANGULAR			2\
+		#define TRIANGULAR			3\
+		#define BLACKMAN			4\
+		#define BLACKMAN_HARRIS 		5\
+
+}

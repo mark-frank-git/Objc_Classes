@@ -1,0 +1,443 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+\cocoascreenfonts1{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\fnil\fcharset0 LucidaGrande;\f2\ftech\fcharset77 Symbol;
+}
+{\colortbl;\red255\green255\blue255;}
+\margl120\margr0\vieww15980\viewh11920\viewkind0
+\pard\partightenfactor0
+
+\f0\i\fs24 \cf0 Probability V0.1\
+22-May-1992\
+
+\i0 Mark Frank\
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\fs28 \cf0 \
+
+\fs16 \
+\pard\li1100\partightenfactor0
+
+\b\fs36 \cf0 Probability\
+
+\fs16 \
+\pard\tx7140\li2100\partightenfactor0
+
+\b0\fs28 \cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	Probability.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\fs28 \cf0 The probability class models a number of probability distributions.  It not only outputs samples from the selected distribution, it can also output theoretical outputs from the selected distribution..    \
+
+\fs16 \
+\pard\tx7140\li2100\partightenfactor0
+\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\partightenfactor0
+
+\i\fs28 \cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in Neuron
+\i0  	id	randomObject;\
+	double	*mean;\
+	double	*variance;\
+	double	*stdDev;\
+	double	rho;\
+	double	probability;\
+	int	distribution;\
+	int	dimensions;\
+	double	*doubleOutputs;\
+\
+	\
+randomObject	random number generator\
+mean	array of mean values\
+variance	array of variances\
+stdDev	array of standard deviations\
+rho	correlation coefficient\
+probability	probability of occurrence\
+distribution	distribution type\
+dimensions	dimension of probability density function\
+doubleOutputs	used for outputting data\
+\pard\tx7140\li2100\partightenfactor0
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\partightenfactor0
+
+\fs16 \cf0 \
+
+\fs28 Initializing a new instance	
+\f1 -
+\f2  
+\f0 init\
+	
+\f1 -
+\f2  
+\f0 initMeanVariance\
+	
+\f1 -
+\f2  
+\f0 initializeSeeds\
+	
+\fs16 \
+
+\fs28 Setting parameters	\'96 setDimensions:\
+	\'96 setMean:\
+	\'96 setProbability:\
+	\'96 setProbDistribution:\
+ 	\'96 setVariance:\
+ 	\'96 setCorrelationCoefficients:\
+	\
+	\
+Getting parameters	\'96 getDimensions\
+	
+\f1 -
+\f0 getMean\
+	
+\f1 -
+\f0 getProbability\
+	\'96 getProbDistribution\
+	\'96 getVariance\
+	\
+Getting Output	\'96 newSample\
+	\'96 densityFunctionAtX:\
+\pard\tx7140\li2100\partightenfactor0
+\cf0  
+\fs16 \
+\
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+
+\fs28 densityFunctionAtX:\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0 (double)
+\b densityFunctionAtX:
+\b0 (double *)
+\i x
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Returns the value of the density function at the vector 
+\i x
+\i0 .  Note that 
+\i x
+\i0  should be of dimension,\
+dimensions.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+getDimensions\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0 (int)
+\b getDimensions\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Returns the number of dimensions in the density function.\
+\
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b\fs16 \cf0 \
+\pard\tx7140\li2100\partightenfactor0
+
+\fs28 \cf0 \
+getMean\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  (
+\f0 double *
+\f2 )
+\f0\b getMean\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Returns a pointer to the mean array.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+getProbability\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  (
+\f0 double
+\f2 )
+\f0\b getProbability\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Returns the class probability.  This value is not used in any of the calculations.  It only saved here\
+for completeness.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+getProbDistribution\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0 (int)
+\b getProbDistribution\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Get the type of the probability distribution function.  The types are declared in Probability.h, also, see below.\
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b \cf0 \
+\
+\pard\tx7140\li2100\partightenfactor0
+\cf0 getVariance\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  (
+\f0 double *
+\f2 )
+\f0\b getVariance\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Returns the variance array.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+init\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b init\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Initializes the Probability object with dimensions=1, mean = 0., variance = 1., normal distibution.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+initMeanVariance\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b initMeanVariance\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Initializes the mean and variance arrays.  This method should not be called directly.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+initializeSeeds\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b initializeSeeds\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Initializes the random number generator seeds to their initial values.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+newSample\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  (
+\f0 double *
+\f2 )
+\f0\b newSample\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Get a new sample from the selected distribution.\
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+setDimensions\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b setDimensions:
+\b0 (int)
+\i newDimensions
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 This method sets the dimensions of the distribution.  \
+\pard\tx7140\li2100\partightenfactor0
+
+\b \cf0 \
+\
+setCorrelationCoefficient\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b setCorrelationCoefficient:
+\b0 (double)
+\i newRho
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 This method sets the correlation coefficient for two-dimensional distributions.  \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b\fs16 \cf0 \
+\pard\tx7140\li2100\partightenfactor0
+\cf0 \
+\
+
+\fs28 setMean\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b setMean:
+\b0 (double *)
+\i newMean
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 This method sets the mean array for the distribution.  \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b\fs16 \cf0 \
+\pard\tx7140\li2100\partightenfactor0
+\cf0 \
+\
+
+\fs28 setProbability\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b setProbability:
+\b0 (double)
+\i newProbability
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 This method sets the probability for this class occurring.  This value is not used in calculations.  \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b\fs16 \cf0 \
+\pard\tx7140\li2100\partightenfactor0
+\cf0 \
+\
+
+\fs28 setProbDistribution\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b setProbDistribution:
+\b0 (int)
+\i type
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 Sets the type of the probability distribution function.  The types are declared in Probability.h, and are\
+listed below.\
+\
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b \cf0 \
+\pard\tx7140\li2100\partightenfactor0
+\cf0 setVariance\
+\pard\li3620\fi-1020\partightenfactor0
+
+\f1\b0 \cf0 -
+\f2  
+\f0\b setVariance:
+\b0 (double *)
+\i newVariance
+\i0\b \
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\partightenfactor0
+
+\b0\fs28 \cf0 This method sets the variance array for the distribution.  \
+\pard\tx1152\tx2304\tx3456\tx4608\tx5760\tx6912\tx8064\tx9216\tx10368\tx11520\partightenfactor0
+\cf0 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 \
+\pard\tx2600\li2100\fi-20\partightenfactor0
+\cf0 \
+CONSTANTS AND DEFINED TYPES\
+\pard\tx1152\tx2304\tx3456\tx4608\tx5760\tx6912\tx8064\tx9216\tx10368\tx11520\partightenfactor0
+\cf0 \
+\pard\tx1152\tx2304\tx3456\tx4608\tx5760\tx6912\tx8064\tx9216\tx10368\tx11520\partightenfactor0
+
+\fs24 \cf0 		#define NORMAL		0\
+		#define UNIFORM		1\
+		#define EXPONENTIAL_DIST 	2\
+		#define ERLANG_DIST	3	/* special case of Gamma dist	*/\
+		#define LOG_NORMAL	4\
+		#define GAUSS_MARKOV	5\
+}

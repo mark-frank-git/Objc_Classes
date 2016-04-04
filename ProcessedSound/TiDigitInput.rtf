@@ -1,0 +1,562 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Courier;}
+\paperw17680
+\paperh12580
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	TiDigitInput\
+	\
+		
+\b0\fs28 INHERITS FROM			Object
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			TiDigitInput.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The TiDigitInput class inputs processed speech files from the TI digit data base.  It also contains tapped delay lines for\
+		calculating delta cepstral and delta energy values.\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from Object
+\i0 		Class	isa;\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in TiDigitInput
+\i0 	
+\fc1\cf1 id	processedSound;\
+						id	cepstralDelayLine;\
+						id	energyDelayLine;\
+						int	numberCodebooks;\
+						int	*deltas;\
+						int	maxDelta;\
+						int	*dataTypes;\
+						int	*inputSize;\
+						int	outputSize;\
+						int	frameCounter;\
+						int	fileCounter;\
+						int	trainFileCounter;\
+						int	numberFiles;\
+						int	numberFrames;\
+						int	speechVectorSize;\
+						int	numberStates;\
+						int	numberModels;\
+						int	stateIncrement;\
+						int	inputModel;\
+						int	trainValue;\
+						int	speechScale;\
+						int	*speechData;\
+						int	oldIndex;\
+						int	**trainingData;\
+						float	**floatTrainingData;\
+						char	*speechFiles[];\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+	\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			
+\fc1\cf1 processedSound		used for reading in the processed TI digit speech files\
+			cepstralDelayLine		used for calculating delta cepstral data\
+			energyDelayLine		used for calculating delta frame energies\
+			numberCodebooks		number of data vectors to output\
+			deltas			the delta size for each of the output data vectors\
+			maxDelta			the maximum delta for all of the data vectors\
+			dataTypes			the types of each of the data vectors, see below for a list of types\
+			inputSize			size of each of the data vectors\
+			outputSize			size of the state training vector for training feature map output probability weights\
+			frameCounter			count of the current frame in the file\
+			fileCounter			count of the current file in the list of speechFiles\
+			trainFileCounter		used to count the number of files since -resetTrainFileCounter\
+			numberFiles			total number of files in the list of speechFiles\
+			numberFrames		number of speech frames in the current speech file\
+			speechVectorSize		size of each speech vector per frame\
+			numberStates			number of states per HMM model\
+			numberModels		number of HMM models\
+			stateIncrement		equal to number of frames divided by number of states for HMM training\
+			inputModel			the model for the current speech file\
+			trainValue			the scale value for training the feature map output weights\
+			speechScale			multiplier for speech data = trainValue/(intScaleFactor from processedSound)			speechData			pointer to the processed speech data for the current file\
+			oldIndex			used in training the output weights of the feature map\
+			trainingData			this array is used for outputting the speech data plus the output weight training data\
+			floatTrainingData		floating point version of trainingData\
+			speechFiles			the list of speech files\
+\
+	\
+		METHOD TYPES\
+		\
+		Initializing			- initWithDeltas:number:types:models:states:\
+						- allocateArrays\
+						- free\
+						- freeArrays\
+						- initializeData:\
+						- setNewDeltas:types:\
+						- openNewSpeechFile\
+\
+		Stepping Through the Data		- stepData\
+						- incrementFrame\
+\
+		Setting parameters			- setSpeechFileList:\
+						- setLabelScale:\
+						- resetTrainFileCounter\
+						- setTrainingOutputsFor:state:\
+\
+		Getting parameters			- numberFrames\
+						- inputSize:\
+						- numberFiles\
+						- fileCounter\
+						- trainFileCounter\
+						- speechDataAvailable\
+						- modelNumber\
+						- modelState\
+						- lastFile\
+						- currentNoiseFrame\
+						- trainingOutput\
+						- oldTrainingOutput\
+						- testOutput\
+						- trainingFloatOutput\
+						- oldTrainingFloatOutput\
+						- testFloatOutput\
+						- getUtteranceDigit:\
+\
+	INSTANCE METHODS\
+\
+	
+\b allocateArrays
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- 
+\b allocateArrays
+\b0 \
+\
+		This is a local method for allocating the various arrays needed, it should not be called directly.\
+\
+\
+	
+\b currentNoiseFrame\
+		- 
+\b0 (BOOL)
+\b currentNoiseFrame
+\b0 \
+\
+		Returns YES if the current speech frame has been classified as noise.\
+\
+\
+	
+\b fileCounter
+\b0 \
+		- (int)
+\b fileCounter
+\b0 \
+	\
+		Returns the speech file counter.\
+\
+\
+	
+\b free
+\b0 \
+		- 
+\b free
+\b0 \
+	\
+		Frees the object and its arrays.\
+\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 	
+\b freeArrays
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- 
+\b freeArrays
+\b0 \
+\
+		This is a local method for freeing up the various arrays needed, it should not be called directly.\
+\
+\
+	
+\b getUtteranceDigit:\
+		- 
+\b0 (int)
+\b getUtteranceDigit:
+\b0 (char *)
+\i string
+\i0 \
+\
+		This is a local method for converting the NIST utterance id to an integer, should not be called directly.\
+\
+\
+	
+\b incrementFrame\
+		- 
+\b0 (BOOL)
+\b incrementFrame
+\b0 \
+\
+		Increments the speech file frame counter.  Opens a new speech file if necessary.  Returns YES on success.\
+\
+		see also, 
+\b stepData, trainingOutput.\
+\
+
+\b0 \
+	
+\b initWithDeltas:number:types:models:states:\
+		- initWithDeltas:
+\b0 (int *)
+\i newDeltas
+\i0   
+\b number:
+\b0 (int)
+\i number
+\i0  
+\b types:
+\b0 (int *)
+\i types
+\i0  
+\b models:
+\b0 (int)
+\i models
+\i0  
+\b states:
+\b0 (int)
+\i states
+\i0 \
+\
+		Initializes the receiver creating a tiDigitInput with 
+\i newDeltas
+\i0  specifying the differencing for each speech vector.  The input, 
+\i number,\
+		
+\i0 specifies the number of codebooks (i.e., the number of vectors), which should be the dimensions of 
+\i newDeltas 
+\i0 and 
+\i types.  
+\i0 The input,\
+		
+\i types 
+\i0 specifies the kind of speech vectors, see below for a list of types.  The inputs, 
+\i models
+\i0  and 
+\i states 
+\i0 specify the number of models\
+		and number of states for the HMM.  These parameters are used for training the output weights of a feature map.\
+\
+\
+	
+\b initializeData:\
+		- initializeData:
+\b0 (id)
+\i sender
+\i0 \
+\
+		This method restarts the speech file pointer to the first file in the list.  It does not open the file.\
+\
+		see also, 
+\b openNewSpeechFile.\
+
+\b0 \
+\
+	
+\b inputSize:\
+		- 
+\b0 (int)
+\b inputSize:
+\b0 (int)
+\i number
+\i0 \
+\
+		Returns the size of the 
+\i number
+\i0 th speech vector.  Where 
+\i number
+\i0  corresponds to a particular codebook.\
+\
+\
+	
+\b lastFile\
+		- 
+\b0 (char *)
+\b lastFile
+\b0 \
+\
+		Returns the name of the last speech file read in.  That is, previous to the one currently being read.\
+\
+\
+	
+\b modelNumber\
+		- 
+\b0 (int)
+\b modelNumber
+\b0 \
+\
+		Returns the HMM model associated with the current speech file.\
+\
+\
+	
+\b modelState\
+		- 
+\b0 (int)
+\b modelState
+\b0 \
+\
+		Returns the HMM state corresponding to the current frame count in the speech file.\
+\
+\
+	
+\b numberFiles\
+		- 
+\b0 (int)
+\b numberFiles
+\b0 \
+\
+		Returns the total number of files in the speech files list.\
+\
+\
+	
+\b numberFrames\
+		- 
+\b0 (int)
+\b numberFrames
+\b0 \
+\
+		Returns the number of frames in the current speech file.\
+\
+\
+	
+\b oldTrainingFloatOutput\
+		- 
+\b0 (float **)
+\b oldTrainingFloatOutput
+\b0 \
+\
+		This method returns the old (floating point) training data.  The two dimensional index corresponds to the codebook then speech data.\
+		For example output[0][1] would be the second speech vector element corresponding to the first codebook.\
+\
+		see also, 
+\b trainingFloatOutput.\
+
+\b0 \
+\
+	
+\b oldTrainingOutput\
+		- 
+\b0 (int **)
+\b oldTrainingOutput
+\b0 \
+\
+		This method returns the old (integer) training data.  The two dimensional index corresponds to the codebook then speech data.\
+		For example output[0][1] would be the second speech vector element corresponding to the first codebook.\
+\
+		see also, 
+\b trainingOutput.\
+
+\b0 \
+\
+	
+\b openNewSpeechFile\
+		- 
+\b0 (BOOL)
+\b openNewSpeechFile
+\b0 \
+\
+		This method opens the next speech file, and returns YES if successful.  This is normally a local method, but can be called by the user.\
+\
+\
+	
+\b resetTrainFileCounter\
+		- resetTrainFileCounter
+\b0 \
+\
+		This method resets the training file counter.  This counter can be used to track the number of speech files that have been read in during\
+		a training session.\
+\
+		see also, 
+\b trainFileCounter.
+\b0 \
+\
+\
+	
+\b setLabelScale:\
+		- setLabelScale
+\b0 :(int)
+\i scale
+\i0 \
+\
+		Sets the instance variable, 
+\i trainValue 
+\i0 equal to 
+\i scale
+\i0 .\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 \
+\
+	
+\b setNewDeltas:
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- 
+\b setNewDeltas:
+\b0 (int *)
+\i newDeltas 
+\b\i0 types:
+\b0 (int *)
+\i types
+\i0 \
+\
+		Sets a new set of difference values, and speech vector types.\
+\
+	\
+	
+\b setSpeechFileList:\
+		- 
+\b0 (BOOL)
+\b setSpeechFileList:
+\b0  (char *)
+\i fileName
+\i0 \
+	\
+		This method reads in a new set of processed speech files from 
+\i fileName
+\i0 , and returns YES if read was successful.\
+\
+\
+	
+\b setTrainingOutputsFor:state:\
+		- setTrainingOutputsFor:
+\b0 (int)
+\i modelNumber 
+\b\i0 state:
+\b0 (int)
+\i state
+\i0 \
+\
+		This method sets the output weight portion of the training data according to the HMM model number and HMM state.  This method\
+		is useful, for example, when training off a Viterbi back trace.\
+		\
+\
+	
+\b speechDataAvailable\
+		- 
+\b0 (BOOL)
+\b speechDataAvailable
+\b0 \
+\
+		Returns YES if there is currently speech data available for output.\
+\
+\
+	
+\b stepData\
+		- 
+\b0 (BOOL)
+\b stepData
+\b0 \
+\
+		Steps the speech file pointer to the next set of data, in preparation for getting output.  Returns NO if there is no speech data\
+		available.  Should call 
+\b incrementFrame 
+\b0 after calling this method.\
+\
+		see also, 
+\b incrementFrame, trainingOutput.
+\b0 \
+\
+\
+	
+\b testFloatOutput\
+		- 
+\b0 (float **)
+\b testFloatOutput
+\b0 \
+\
+		This method returns the float test data.  The two dimensional index corresponds to the codebook then speech data. For example,\
+		output[0][1] would be the second speech vector element corresponding to the first codebook.  The test data differs from the training\
+		data in that the output weight data for the test data contains garbage.\
+\
+		see also, 
+\b trainingFloatOutput.\
+
+\b0 \
+\
+	
+\b testtOutput\
+		- 
+\b0 (int **)
+\b testFloatOutput
+\b0 \
+\
+		This method returns the integer test data.  The two dimensional index corresponds to the codebook then speech data. For example,\
+		output[0][1] would be the second speech vector element corresponding to the first codebook.  The test data differs from the training\
+		data in that the output weight data for the test data contains garbage.\
+\
+		see also, 
+\b trainingOutput.\
+
+\b0 \
+\
+	
+\b trainFileCounter\
+		- 
+\b0 (int)
+\b trainFileCounter
+\b0 \
+\
+		Returns the value of the training file counter.\
+\
+		see also, 
+\b resetTrainFileCounter.
+\b0 \
+\
+\
+	
+\b trainingFloatOutput\
+		- 
+\b0 (float **)
+\b trainingFloatOutput
+\b0 \
+\
+		This method returns the floating point training data.  The two dimensional index corresponds to the codebook then speech data. For\
+		example, output[0][1] would be the second speech vector element corresponding to the first codebook.\
+\
+		see also, 
+\b testFloatOutput.\
+
+\b0 		\
+\
+	
+\b trainingOutput\
+		- 
+\b0 (int **)
+\b trainingOutput
+\b0 \
+\
+		This method returns the integer training data.  The two dimensional index corresponds to the codebook then speech data. For\
+		example, output[0][1] would be the second speech vector element corresponding to the first codebook.\
+\
+		see also, 
+\b testOutput.\
+
+\b0 \
+
+\pard\tx2600\fi-20\li2100\fc0\cf0 \
+CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\f1\fs24 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\fs28\fc1\cf1 //dataTypes\
+
+\fs24 		#define CEPSTRAL		0	/* Cepstral data		*/\
+		#define ENERGY		1	/* Energy data		*/\
+\
+		#define CEPSTRAL_OFFSET	0	/* index into speech data vector	*/\
+		#define ENERGY_OFFSET	9	/* index into speech data vector	*/\
+\
+		#define CEPSTRAL_SIZE		7	/* Cepstral vector size		*/\
+		#define ENERGY_SIZE		1	/* Energy vector size		*/
+}

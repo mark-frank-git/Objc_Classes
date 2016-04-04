@@ -1,0 +1,225 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh11920
+\margl120
+\margr0
+{\colortbl\red0\green0\blue0;}
+\f0\b0\i\ul0\ql\fs24\fi0\li0\gray0\up0\dn0 LVQMap V0.1\
+22-May-1992\
+
+\i0 Mark Frank\
+frank@dendrite.sps.mot.com
+\pard\tx3120\tx3620\tx4120\fs16\li2620 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\fs36\li1100 LVQMap\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100 INHERITS FROM	IntFeatureMap\
+
+\fs16 \
+
+\fs28 DECLARED IN	LVQMap.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620 The LVQMap inherits all of the functionality of the IntFeatureMap object.  It adds the capability to fine tune\
+the feature map after self organization by setting lvqLearning to YES.    \
+
+\fs16 \
+
+\pard\tx7140\li2100 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140 Inherited from Object
+\i0 	IntFeatureMap	everything;\
+
+\fs16 \
+
+\i\fs28 Declared in Neuron
+\i0  	BOOL	lvqLearning;\
+	double	epsilon;\
+\
+	\
+lvqLearning	if YES LVQ2 type of learning is used, else self organization\
+epsilon	defines the window size for LVQ2 learning\
+
+\pard\tx7140\fs16\li2100 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140 \
+
+\fs28 Initializing a new instance	
+\f1 - 
+\f0 init\
+	
+\fs16 \
+
+\fs28 Training	± updateWeights\
+ 	± updateWeightsUsingLVQ\
+	± negativeUpdateWeightsofNeuron\
+	\
+Setting parameters	± setEpsilon:\
+	± setLVQLearning:\
+\
+	\
+Getting parameters	± getClassOfNeuron:\
+	
+\f1 -
+\f0 getEpsilon\
+	
+\f1 -
+\f0 getNeuronType\
+	± isLVQLearning:\
+ 
+\pard\tx7140\fs16\li2100 \
+\
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 getClassOfNeuron:\
+
+\pard\f1\b0\fi-1020\li3620 - 
+\f0\b getClassOfNeuron:
+\b0 (int)
+\i neuronNumber
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 Returns the class of the given neuron by finding the maximum reverse flow synapse.\
+\
+
+\b\fs16 \
+
+\pard\tx7140\fs28\li2100 \
+getEpsilon\
+
+\pard\f1\b0\fi-1020\li3620 - (
+\f0 double
+\f1 )
+\f0\b getEpsilon\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 Returns the value of the window parameter.  Default value is 0.35 corresponding to a 25% window.\
+
+\pard\tx7140\b\li2100 \
+\
+isLVQLearning\
+
+\pard\f1\b0\fi-1020\li3620 - (
+\f0 BOOL
+\f1 )
+\f0\b isLVQLearning\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 Returns YES if LVQ learning is enabled, otherwise self organized learning is used.  Default value\
+is NO.\
+
+\pard\tx7140\b\li2100 \
+\
+setEpsilon:\
+
+\pard\f1\b0\fi-1020\li3620 - 
+\f0\b setEpsilon:
+\b0 (double)
+\i newEpsilon
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 Sets a new value for the window parameter.\
+
+\b \
+\
+
+\pard\tx7140\li2100 setLVQLearning:\
+
+\pard\f1\b0\fi-1020\li3620 - 
+\f0\b setLVQLearning:
+\b0 (BOOL)
+\i flag
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 If  
+\i flag
+\i0  is YES, turns on LVQ type of learning.\
+
+\b\fs16 \
+
+\pard\tx7140\li2100 \
+\
+
+\fs28 updateWeights\
+
+\pard\f1\b0\fi-1020\li3620 - 
+\f0\b updateWeights\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 This method overrides the method in IntFeatureMap for updating the neurons' weights.  If the lvqLearning\
+flag is set, LVQ type of learning is used.
+\fc0   \
+
+\b\fs16 \
+
+\pard\tx7140\li2100 \
+\
+
+\fs28 updateWeightsUsingLVQ\
+
+\pard\f1\b0\fi-1020\li3620 - 
+\f0\b updateWeightsUsingLVQ\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 Updates the weights of the neurons using LVQ learning.
+\fc0  This method should not be called directly, use\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\b\fi-1020\li3620 updateWeights 
+\b0 instead.
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0 \
+
+\pard\tx7140\b\fs28\li2100 \
+\
+negativeUpdateWeightsOfNeuron:\
+
+\pard\f1\b0\fi-1020\li3620 - 
+\f0\b negativeUpdateWeightsOfNeuron:
+\b0 (int)
+\i neuronNumber
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620 This method is used in LVQ learning to move weights in negative direction of input vector.  This method\
+should not be called directly.\
+
+}

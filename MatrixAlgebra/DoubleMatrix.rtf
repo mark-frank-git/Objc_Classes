@@ -1,0 +1,408 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f2\fmodern Courier;}
+\paperw13980
+\paperh11920
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	DoubleMatrix\
+	\
+		
+\b0\fs28 INHERITS FROM			Object
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			DoubleMatrix.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The DoubleMatrix class allows calculation involving double precision matrices.  Note that the \
+		elements of the matrix are stored in a one dimensional array by rows.  That is, row 0 is stored in\
+		elements 0 -> # of columns, etc.\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from Object
+\i0 		Class	isa;\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in DoubleMatrix
+\i0 	
+\fc1\cf1 int	rows;\
+						int	columns;\
+						int	resultantRows;\
+						int	resultantCols;\
+						int	*pivot;\
+						double	*matrix;\
+						double	*luMatrix;\
+						double	*inverseMatrix;\
+						double	*resultantMatrix;\
+						double	*xSolution;\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+	\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			
+\fc1\cf1 rows			# of rows in the matrix\
+			columns			# of columns in the matrix\
+
+\fc0\cf0 			
+\fc1\cf1 resultantRows			# of rows in the result matrix\
+			resultantCols			# of columns in the result matrix\
+			pivot			used in finding the LU decomposition\
+			matrix			the matrix\
+			luMatrix			LU decomposition of the matrix\
+			inverseMatrix			inverse of the matrix\
+			resultantMatrix		result of binary operations on the matrix\
+			xSolution			solution to Ax = b\
+\
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- initWitRows:columns:\
+						- free\
+						- matrixAllocate:columns:\
+\
+		Matrix operations			- determinant\
+						- luDecomp\
+						- linearSolve:\
+						- invert\
+						- addMatrix:\
+						- multMatrix:rows:columns:\
+\
+		Setting parameters			- setHilbert\
+						- setMatrix:\
+\
+		Getting parameters			- rows\
+						- columns\
+						- matrix\
+						- luMatrix\
+						- xSolution\
+						- inverseMatrix\
+						- resultantMatrix\
+\
+	INSTANCE METHODS\
+\
+	
+\b addMatrix:
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- 
+\b addMatrix:
+\b0  (double *)
+\i b
+\i0 \
+\
+		Adds the input matrix to the matrix in 
+\i matrix, 
+\i0 the result is stored in resultantMatrix.\
+\
+		see also, 
+\b resultantMatrix.\
+\
+
+\b0 \
+	
+\b columns\
+		- 
+\b0 (int)
+\b columns
+\b0 \
+\
+		Returns the number of columns in the matrix.\
+\
+		see also, 
+\b rows.\
+
+\b0 \
+\
+	
+\b determinant
+\b0 \
+		- (double)
+\b determinant
+\b0 \
+	\
+		Returns the determinant of the square matrix.  You must first call luDecomp before calling this method.\
+\
+		see also, 
+\b luDecomp.
+\b0 \
+\
+\
+	
+\b free
+\b0 \
+		- 
+\b free
+\b0 \
+	\
+		Frees the object, and its allocated arrays.\
+\
+\
+	
+\b initWithRows: columns:\
+		- initWithRows:
+\b0  (int)
+\i numberRows
+\i0  
+\b columns:
+\b0 (int)
+\i numberCols
+\i0 \
+\
+		Initializes the receiver creating a matrix net with 
+\i  numberRows
+\i0  rows, and
+\i  numberCols
+\i0  columns.\
+\
+\
+	
+\b inverseMatrix\
+		- 
+\b0 (double *)
+\b inverseMatrix
+\b0 \
+\
+		Returns a pointer to the inverse matrix.  No calculations are performed, call the method, 
+\b invert, 
+\b0 prior\
+		to calling this method.\
+\
+		see also, 
+\b invert.
+\b0 \
+\
+\
+	
+\b invert\
+		- 
+\b0 (BOOL)
+\b invert
+\b0 \
+\
+		Inverts the matrix using the LU decomposition.  Returns YES if successful.  This method calls \
+		
+\b luDecomp 
+\b0 before proceeding, therefore, the sender need not call 
+\b luDecomp 
+\b0 before calling this\
+		method.\
+\
+		see also, 
+\b luDecomp.
+\b0 \
+\
+\
+	
+\b linearSolve:\
+		- 
+\b0 (BOOL)
+\b ilinearSolve:
+\b0 (double *)
+\i b
+\i0 \
+\
+		Solves the linear system of equations 
+\i matrix * x = b 
+\i0 using the LU decomposition.  Returns YES if\
+		successful.  This method calls 
+\b luDecomp 
+\b0 before proceeding, therefore, the sender need not call\
+		
+\b luDecomp 
+\b0 before calling this method.  The result is stored in 
+\i xSolution
+\i0 .\
+\
+		see also, 
+\b luDecomp, xSolution.
+\b0 \
+\
+\
+	
+\b luDecomp\
+		- 
+\b0 (BOOL)
+\b luDecomp
+\b0 \
+\
+		Performs the LU decomposition on 
+\i matrix,  
+\i0 the result is stored in 
+\i luMatrix
+\i0 , the pivoting information is\
+		stored in 
+\i pivot.
+\i0   This method normally does not need to be called directly, since many of the other\
+		methods call this method before proceeding.  One exception is 
+\b determinant.
+\b0 \
+\
+		see also, 
+\b invert, linearSolve, determinant.
+\b0 \
+\
+\
+	
+\b luMatrix\
+		- 
+\b0 (double *)
+\b luMatrix
+\b0 \
+	\
+		Returns a pointer to the LU matrix.  The elements are stored by rows.\
+\
+\
+	
+\b matrix\
+		- 
+\b0 (double *)
+\b matrix
+\b0 \
+	\
+		Returns a pointer to the input matrix.  The elements are stored by rows.\
+\
+\
+	
+\b matrixAllocate:columns:\
+		- 
+\b0 (double *)
+\b matrixAllocate:
+\b0 (int)
+\i numberRows 
+\b\i0 columns:
+\b0 (int)
+\i numberCols
+\i0 \
+	\
+		This is a local method for allocating matrices.  Should not be called directly.\
+\
+\
+	
+\b multMatrix:rows:columns:\
+		- 
+\b0 (BOOL)
+\b multMatrix:
+\b0 (double *)
+\i b 
+\b\i0 rows:
+\b0 (int)
+\i numberRows 
+\b\i0 columns:
+\b0 (int)
+\i numberCols
+\i0 \
+	\
+		This method post multiplies the input matrix, 
+\i b
+\i0 , by 
+\i matrix, 
+\i0 the result is stored in 
+\i resultantMatrix.\
+		
+\i0 Returns YES if successful. \
+\
+		see also, 
+\b resultantMatrix.
+\b0 \
+\
+\
+	
+\b printOutput:\
+		- printOutput:
+\b0  (int)
+\i type
+\i0 \
+\
+		Prints out the matrix indicated by 
+\i type, 
+\i0 see below for a list of types.\
+\
+		see also, 
+\b matrix, resultantMatrix, luMatrix, inverseMatrix.
+\b0 \
+\
+\
+	
+\b resultantMatrix\
+		- 
+\b0 (double *)
+\b resultantMatrix
+\b0 \
+	\
+		Returns a pointer to the resultant matrix.  The elements are stored by rows.\
+
+\b \
+
+\b0 \
+	
+\b rows\
+		- 
+\b0 (int)
+\b rows
+\b0 \
+\
+		Returns the number of rows in the matrix.\
+\
+		see also, 
+\b columns.\
+
+\b0 \
+\
+	
+\b setHilbert\
+		- setHilbert
+\b0 \
+\
+		Sets the input matrix to be a Hilbert matrix.\
+\
+\
+	
+\b setMatrix:\
+		- setMatrix:
+\b0  (double *)
+\i inputMatrix
+\i0 \
+\
+		Copies 
+\i inputMatrix 
+\i0 to 
+\i matrix
+\i0 .\
+\
+\
+	
+\b xSolution\
+		- 
+\b0 (double *)
+\b xSolution
+\b0 \
+	\
+		Returns a pointer to the solution of  the linear system of equations 
+\i matrix * x = b.  
+\i0  Call 
+\b linearSolve
+\b0 \
+		before calling this method.\
+\
+		see also, 
+\b linearSolve.
+\b0 \
+
+\pard\tx1152\tx2304\tx3456\tx4608\tx5760\tx6912\tx8064\tx9216\tx10368\tx11520\fc1\cf1 \
+
+\pard\tx2600\fi-20\li2100\fc0\cf0 \
+CONSTANTS AND DEFINED TYPES\
+
+\pard\tx1152\tx2304\tx3456\tx4608\tx5760\tx6912\tx8064\tx9216\tx10368\tx11520\fc1\cf1 \
+
+\fs24 		#define	INPUT_MATRIX	0		/* defines for printing output	*/\
+		#define	LU_MATRIX	1\
+		#define 	INVERSE_MATRIX	2\
+		#define	RESULT_MATRIX	3\
+
+}

@@ -1,0 +1,739 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+\cocoascreenfonts1{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\ftech\fcharset77 Symbol;\f2\fnil\fcharset0 LucidaGrande;
+\f3\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;}
+\margl120\margr0\vieww15980\viewh11260\viewkind0
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\f0\i\fs24 \cf0 SpecialMaps V0.1\
+22-May-1992\
+
+\i0 Mark Frank\
+
+\fs28 \
+
+\fs16 \
+
+\b\fs36 	SpecialMaps\
+
+\fs16 \
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 	\
+		INHERITS FROM	IntFeatureMap\
+
+\fs16 \
+
+\fs28 		\
+		DECLARED IN	SpecialMaps.h\
+
+\fs16 \
+\
+\
+
+\fs28 		CLASS DESCRIPTION\
+
+\fs16 \
+
+\fs28 		The SpecialMaps class inherits all of the functionality of the IntFeatureMap object.  It adds other feature map type\
+		learning such as learning vector quantization (LVQ), the Linde-Buzo Gray algorithm (LBG), etc.   \
+
+\fs16 \
+\
+\
+
+\fs28 		INSTANCE VARIABLES\
+
+\fs16 \
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\i\fs28 \cf0 		Inherited from IntFeatureMap
+\i0 	id	*mapNeurons;\
+						id	randomObject;\
+						int	neuronType;\
+						int	rows, columns;\
+						int	numberMapNeurons;\
+						int	numberWeightsPerNeuron;\
+						int	numberInputWeights;\
+						int	numberOutputWeights;\
+						int	neighborhoodSize;\
+						int	winnerNumber, runnerUp;\
+						int	numberSmooth;\
+						int	weightUpdateType;\
+						BOOL	feedforward;\
+						BOOL	smoothOutput;\
+						BOOL	learningEnabled;\
+						int	*mapInputs;\
+						int	*outputWeights, *deltaWeights;\
+						float	*probabilityScale;\
+						NXZone	*myZone;\
+						double	etaInput, etaOutput;\
+						double	synapseScaleFactor;\
+\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs16 \cf0 \
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\i\fs28 \cf0 		Declared in SpecialMaps
+\i0  		int	learningType;\
+						int	plasticitySelect;\
+						int	*meanCount;\
+						int	**classCount;\
+						BOOL	converged;\
+						double	*localPlasticities;\
+						double	**means;\
+						double	convergenceEpsilon;\
+						double	oldDistortion;\
+						double	epsilon;\
+						double	lbgDistortion;\
+\
+	\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 			learningType			type of learning: LVQ, LBG, etc., see defined types below\
+			plasticitySelect		the learning rate for CYCLONNE type learning\
+			meanCount			centroid counter for LBG type learning\
+			classCount			class counter for LBG type learning\
+			converged			YES = LBG training has converged\
+			localPlasticities		local learning rates used in modulated plasticities learning\
+			means			centroids for LBG type learning\
+			convergenceEpsilon		LBG convergence criterion\
+			oldDistortion			old LBG distortion\
+			epsilon			LVQ learning window\
+			lbgDistortion			the LBG distortion output\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs16 \cf0 \
+\
+\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 		METHOD TYPES\
+		\
+		Initializing a new instance		- init\
+						- initConnections\
+						- initTrainingCounts\
+						- freeConnections\
+\
+		Running the algorithm		- updateWinner\
+						- updateWeights\
+						- updateWeightsUsingLVQ\
+						- updateWeightsUsingLVQMod\
+						- updateWeightsUsingRangeErr\
+						- updateWeightsUsingLBG\
+						- updateWeightsUsingModulatedPlasticity\
+						- updateWeightsUsingCyclonne\
+						- negativeUpdateWeightsOfNeuron:\
+						- negativeUpdateInputWeightsOfNeuron:\
+						- updateWeightsOfNeuron:withEtaScale:\
+						- updateWeightsOfCyclonneNeuron:\
+						- moveWeightsOfNeuron:toward:\
+						- moveInputWeightsOfNeuron:toward:\
+\
+		Setting parameters			- setConvergenceEpsilon:\
+						- setConverged:\
+						- setEpsilon:\
+						- setLearningType:\
+						- setPlasticitySelect: \
+\
+		Getting parameters			- isConverged\
+						- getEpsilon\
+						- getLearningType\
+						- getConvergenceEpsilon\
+						- getDistortion\
+						- getClassOfNeuron:\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+\cf0  
+\fs16 \
+\
+\
+\
+
+\fs28 	INSTANCE METHODS\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 \
+	
+\b freeConnections\
+		- freeConnections
+\b0 \
+\
+		Frees the feature map connections to the input layer.  This routine should be called after changing\
+		the number of map neurons or number of input layer neurons, see also 
+\b initConnections
+\b0 .  This method overrides the\
+		one in IntFeatureMap.\
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs16 \cf0 \
+
+\b \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	getClassOfNeuron:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b getClassOfNeuron:
+\b0 (int)
+\i neuronNumber
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Returns the class of the given neuron by finding the maximum reverse flow synapse.\
+
+\b 	\
+\
+	getConvergenceEpsilon\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  (
+\f0 int
+\f1 )
+\f0\b getConvergenceEpsilon\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Returns the value of the LBG convergence criterion.\
+
+\b 	\
+\
+	getDistortion\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  (
+\f0 double
+\f1 )
+\f0\b getConvergenceEpsilon\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Returns the value of the LBG distortion.\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b\fs16 \cf0 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 \
+	getEpsilon\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  (
+\f0 double
+\f1 )
+\f0\b getEpsilon\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Returns the value of the window parameter.  Default value is 0.35 corresponding to a 25% window.\
+
+\b \
+\
+	getLearningType\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  (
+\f0 int
+\f1 )
+\f0\b getLearningType\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Returns the type of learning algorithm being used.  See below for definitions of learning types.\
+	\
+\
+	
+\b init\
+		- init \
+
+\b0 \
+		Initializes the receiver.  This should not be called directly. Use \
+		
+\b initWithInputs: outputs: rows: columns:
+\b0  instead (defined in IntFeatureMap).\
+\
+\
+	
+\b initConnections\
+		- initConnections
+\b0 \
+\
+		Initializes the feature map connections to the input layer.  This routine is called by \
+		
+\b initWithInputs: outputs: rows: columns:
+\b0 , however, if the layer parameters change, one should\
+		call 
+\b freeConnections
+\b0  before the change, and then 
+\b initConnections
+\b0  after the change to set up the\
+		feature map for the new parameters.  This method overrides the one in IntFeatureMap.\
+\
+\
+	
+\b initTrainingCounts\
+		- initTrainingCounts
+\b0 \
+\
+		Initializes the counters for starting a new LBG training session.\
+
+\b \
+\
+	isConverged\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  (
+\f0 BOOL
+\f1 )
+\f0\b isConverged\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Returns YES if the LBG algorithm has converged.\
+\
+\
+	
+\b moveInputWeightsOfNeuron:toward:\
+		- moveInputWeightsOfNeuron:
+\b0  (int)
+\i neuron 
+\i0\b toward:
+\b0  (int)
+\i toNeuron
+\i0 \
+\
+		This is a local method, and should not be called directly.  It makes the input weights of a neuron more similar to the\
+		weights of a target neuron.\
+\
+\
+	
+\b moveWeightsOfNeuron:toward:\
+		- moveWeightsOfNeuron:
+\b0  (int)
+\i neuron 
+\i0\b toward:
+\b0  (int)
+\i toNeuron
+\i0 \
+\
+		This is a local method, and should not be called directly.  It makes the weights of a neuron more similar to the\
+		weights of a target neuron.\
+
+\b \
+\
+	negativeUpdateInputWeightsOfNeuron:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b negativeUpdateInputWeightsOfNeuron:
+\b0 (int)
+\i neuronNumber
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		This method is used in LVQ learning to move the input weights in negative direction of input vector.  This method\
+		should not be called directly.\
+
+\b \
+\
+	negativeUpdateWeightsOfNeuron:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b negativeUpdateWeightsOfNeuron:
+\b0 (int)
+\i neuronNumber
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		This method is used in LVQ learning to move weights in negative direction of input vector.  This method\
+		should not be called directly.\
+
+\b \
+\
+	setConverged:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b setConverged:
+\b0 (BOOL)
+\i flag
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Forces the LBG converged variable equal to 
+\i flag.
+\i0 \
+
+\b \
+\
+	setConvergenceEpsilon:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b setConvergenceEpsilon:
+\b0 (int)
+\i newEpsilon
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Sets a new convergence criterion for the LBG algorithm.\
+
+\b \
+\
+	setEpsilon:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b setEpsilon:
+\b0 (double)
+\i newEpsilon
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Sets a new value for the window parameter.\
+
+\b \
+\
+	setLearningType:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b setLearningType:
+\b0 (int)
+\i type
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Sets the instance variable, learningType to the input, 
+\i type.  
+\i0 See below for allowed learning types.\
+
+\b \
+\
+	setPlasticitySelect:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b setPlasticitySelect:
+\b0 (int)
+\i index
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Sets the instance variable, plasticitySelect to the input, 
+\i index. 
+\i0  Used for Cyclone board training.  See below for allowed\
+		values.\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b\fs16 \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeights\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeights\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		This method overrides the method in IntFeatureMap for updating the neurons' weights.  If the lvqLearning\
+		flag is set, LVQ type of learning is used.  \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b\fs16 \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsOfCyclonneNeuron:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsOfCyclonneNeuron:
+\b0 (int)
+\i neuronNumber
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of a neuron using the hardware CYCLONNE learning. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsOfNeuron:withEtaScale:\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsOfCyclonneNeuron:
+\b0 (int)
+\i neuronNumber 
+\i0\b withEtaScale:
+\b0 (double)
+\i neuronNumber
+\i0\b \
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of a neuron with a scaling of the learning rate. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsUsingCyclonne\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsUsingCyclonne\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of the neurons using Cyclonne learning. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsUsingLBG\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsUsingLBG\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of the neurons using the LBG algorithm. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsUsingLVQ\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsUsingLVQ\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of the neurons using LVQ learning. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsUsingLVQMod\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsUsingLVQMod\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of the neurons using a modified version of LVQ learning. This method should not be called directly,\
+		use 
+\b updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsUsingModulatedPlasticity\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsUsingModulatedPlasticity\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of the neurons using modulated plasticity learning. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWeightsUsingRangeErr\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWeightsUsingRangeErr\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		Updates the weights of the neurons using range error learning. This method should not be called directly, use\
+
+\b 		updateWeights 
+\b0 instead.\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b\fs16 \cf0 \
+\
+\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs28 \cf0 	updateWinner\
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\f1\b0 \cf0 		
+\f2 -
+\f1  
+\f0\b updateWinner\
+
+\fs16 \
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\partightenfactor0
+
+\b0\fs28 \cf0 		This method overrides the same method in IntFeatureMap.  The method is needed in this class to perform some special\
+		tasks for the LBG algorithm.
+\fs16 \
+\
+
+\fs28 \
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+\cf0 	CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\f3\fs24 \cf0 	
+\f0\fs28 \
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\partightenfactor0
+
+\fs24 \cf0 	#define	TRUNCATED		0	/* weight update types		*/\
+	#define	ROUNDED		1\
+	#define	MINIMUM_STEP		2	/* This is in the hardware	*/\
+	#define	STATISTICAL		3\
+	#define	INCREMENT		4\
+\
+	// Cyclone plasticities\
+	#define 	PLASTICITY_DIMENSION	8\
+	int plasticity_shift[PLASTICITY_DIMENSION] = \{0, 1, 2, 3, 4, 5, 6, 7\};\
+\
+	// Learning types\
+	#define SELF_ORGANIZING		0\
+	#define LVQ_LEARNING		1\
+	#define RANGE_ERR_LEARNING	2\
+	#define LVQ_MOD_LEARNING		3	/* modified LVQ */\
+	#define LBG			4	/* LBG clustering	*/\
+	#define MOD_PLASTICITY		5	/* modulated plasticity */\
+	#define CYCLONNE		6	/* Simulate the hardware */\
+}

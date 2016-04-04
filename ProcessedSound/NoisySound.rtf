@@ -1,0 +1,381 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Courier;}
+\paperw17340
+\paperh13680
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\f0\b\i0\ulnone\fs36\fc1\cf1 	NoisySound\
+	\
+		
+\b0\fs28 INHERITS FROM			NISTSound
+\b\fs36 \
+\
+	 
+\b0\fs28  	DECLARED IN			NoisySound.h\
+\
+		CLASS DESCRIPTION\
+		\
+		The NoisySound class is a subclass of NISTSound which is in turn a subclass of ProcessedSound.  It allows for adding noise\
+		to the speech data prior to processing.\
+\
+		INSTANCE VARIABLES\
+\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\fc1\cf1 			
+\i Inherited from NISTSound
+\i0 	id	phonemeMap;\
+						id	convertedSound;\
+						int	filterType;\
+						int	numberPoles;\
+						int	outputSamplingType;\
+						int	numberPhonemes;\
+						int	phonemeStartSamples[]\
+						int	phonemeMiddleSamples[]\
+						int	phonemeEndSamples[]\
+						char	phonemeList[][]\
+						float	offset;\
+						BOOL	phonemeLabelsAvailable;\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fs16\fc0\cf0 \
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx9200\tx9200\tx10360\tx11520\i\fs28\fc0\cf0 			Declared in NoisySound	
+\i0 	
+\fc1\cf1 id	noise;\
+						id	playSound;\
+						int	noiseSamples;\
+						int	noiseOffset;\
+						int	hiEnergyFrameCt;\
+						float	*floatNoise;\
+						double	snr;\
+						double	noiseEnergy;\
+						double	signalEnergy;\
+						double	threshold;\
+						char	noiseFile[];\
+				
+\pard\tx1140\tx2300\tx3440\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 \
+	\
+
+\pard\tx1140\tx2300\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc0\cf0 			
+\fc1\cf1 noise			a Sound object for storing the noise samples\
+			playSound			a Sound object for adding noise to speech to play noisy speech\
+			noiseSamples			total number of samples in the noise file\
+			noiseOffset			offset into the noise file to start sampling noise to add to speech\
+			hiEnergyFrameCt		# of signal frames above the signal threshold\
+			floatNoise			floating point version of noise samples\
+			snr			the desired signal-to-noise ratio\
+			noiseEnergy			average energy per sample in the raw noise data\
+			signalEnergy			average energy per sample in the speech data\
+			threshold			signal energy threshold to be used for including frames to be counted\
+			noiseFile			name of the noise file\
+\
+	\
+		METHOD TYPES\
+		\
+		Initializing a new instance		- initWithSoundWindow:\
+						- free\
+\
+		Adding Noise			- addNoiseToSound\
+						- playNoisySound\
+\
+		Setting parameters			- setThreshold:\
+						- setSignalToNoiseRatio:\
+						- setNoiseOffset:\
+						- setSpectralSubtraction:\
+						- calculateEnergies\
+\
+		Getting parameters			- noiseSamples\
+						- noiseOffset\
+						- snr\
+						- noiseFile\
+						- threshold\
+						- noiseEnergy\
+						- signalEnergy\
+						- hiEnergyFrameCt\
+\
+		Reading/Writing Files		- readNoiseFile:\
+						- savePrcFile:\
+						- writeProcessedHeader:::\
+						- writeProcessedData:::\
+\
+	INSTANCE METHODS\
+\
+	
+\b addNoiseToSound
+\b0 \
+
+\pard\tx1140\tx1800\tx2880\tx4600\tx5760\tx6900\tx8060\tx9200\tx10360\tx11520\fc1\cf1 		- 
+\b addNoiseToSound
+\b0 \
+\
+		Adds noise to the speech data with the signal-to-noise ratio specified in the instance variable.  The noisy speech is saved in the\
+		instance variable, 
+\i soundData, 
+\i0 which is inherited from ProcessedSound.\
+\
+		see also, 
+\b setSignalToNoiseRatio:, setNoiseOffset:, readNoiseFile:
+\b0 \
+\
+\
+	
+\b calculateEnergies\
+		- calculateEnergies
+\b0 \
+\
+		This method calculates the signal and noise energies prior to adding noise to the speech signal.  This is a local method, and should\
+		not be called directly.\
+\
+\
+	
+\b free
+\b0 \
+		- 
+\b free
+\b0 \
+	\
+		Frees the object and its allocated arrays.\
+\
+\
+	
+\b hiEnergyFrameCt
+\b0 \
+		- (int)
+\b hiEnergyFrameCt
+\b0 \
+	\
+		Returns the instance variable which is a count of the number of frames in the speech data with energy above 
+\i threshold.
+\i0 \
+\
+\
+	
+\b initWithSoundWindow:
+\b0 \
+		- 
+\b initWithSoundWindow:
+\b0 (id)
+\i newSoundWindow
+\i0 \
+	\
+		Initializes the receiver with a sound window for plotting the speech.  If the application won't be using a sound \
+		window, set 
+\i newSoundWindow 
+\i0 = nil.  This method overrides the super's method.\
+\
+\
+	
+\b noiseEnergy\
+		- 
+\b0 (float)
+\b noiseEnergy
+\b0 \
+\
+		Returns the instance variable which is a measure of the average energy of the unscaled noise data.\
+\
+\
+	
+\b noiseFile\
+		- 
+\b0 (char *)
+\b noiseFile
+\b0 \
+\
+		Returns the name of the file containing the noise data.\
+\
+		see also, 
+\b readNoiseFile:
+\b0 \
+\
+\
+	
+\b noiseOffset\
+		- 
+\b0 (int)
+\b noiseOffset
+\b0 \
+\
+		Returns the instance variable which sets the offset into the noise file for sampling the noise data to add to the speech signal.\
+\
+		see also, 
+\b setNoiseOffset:
+\b0 \
+\
+	\
+	
+\b noiseSamples
+\b0 \
+		- (int)
+\b noiseSamples
+\b0 \
+\
+		Returns the instance variable which indicates the total number of samples in the noise file.\
+\
+	\
+	
+\b playNoisySound
+\b0 \
+		- 
+\b playNoisySound
+\b0 \
+\
+		Plays the speech data with noise added at the given signal-to-noise ratio.\
+\
+\
+	
+\b readNoiseFile:
+\b0 \
+		- (int)
+\b readNoiseFile:
+\b0 (const char *)
+\i fileName
+\i0 \
+	\
+		Reads the noise data out of the specified file, and saves the noise samples into 
+\i *floatNoise
+\i0 .  Returns 0 if read was succesful.\
+\
+\
+	
+\b savePrcFile:
+\b0 \
+		- (BOOL)
+\b savePrcFile:
+\b0 (char *)
+\i processedFile
+\i0 \
+	\
+		Saves the processed speech data plus noise to disk.  See ProcessedSound for some of the processing that is performed.  Returns\
+		YES if write was successful.\
+\
+\
+	
+\b setNoiseOffset:
+\b0 \
+		- 
+\b setNoiseOffset:
+\b0 (int)
+\i offset
+\i0 \
+\
+		Sets the instance variable which sets the offset into the noise file for sampling the noise data to add to the speech signal.\
+\
+		see also, 
+\b noiseOffset:
+\b0 \
+\
+\
+	
+\b setSignalToNoiseRatio:
+\b0 \
+		- 
+\b setSignalToNoiseRatio:
+\b0 (float)
+\i signalToNoise\
+
+\i0 \
+		Sets the instance variable for determining the ratio of signal to noise energy when adding noise to the speech signal.\
+\
+		see also, 
+\b addNoiseToSound.
+\b0 \
+
+\i 	
+\i0 \
+\
+	
+\b setSpectralSubtraction:
+\b0 \
+		- 
+\b setSpectralSubtraction:
+\b0  (BOOL)
+\i flag
+\i0 \
+	\
+		Sets a flag in the 
+\i speechProcessor 
+\i0 object (inherited from ProcessedSound) to perform spectral subtraction on the noisy signal to try\
+		to reduce the effects of noise.\
+\
+\
+	
+\b setThreshold:
+\b0 \
+		- 
+\b setThreshold:
+\b0  (float)
+\i threshold
+\i0 \
+	\
+		Sets the instance variable which is the signal energy threshold to be used for including frames to be counted when calculating the\
+		average signal energy.\
+\
+\
+	
+\b signalEnergy
+\b0 \
+		- (float) 
+\b signalEnergy
+\b0 \
+\
+		Returns the average signal energy in the noise free speech data.\
+\
+\
+	
+\b snr\
+		- 
+\b0 (float)
+\b snr \
+
+\b0 \
+		Returns the instance variable which sets the signal-to-noise ratio used in adding noise to the speech signal.\
+\
+\
+	
+\b threshold\
+		- 
+\b0 (float)
+\b threshold \
+
+\b0 	\
+		Returns the instance variable which is the signal energy threshold to be used for including frames to be counted when calculating\
+		the average signal energy.\
+\
+\
+	
+\b writeProcessedData::\
+		- writeProcessedData:
+\b0  (FILE *)
+\i filePtr
+\i0   
+\b :
+\b0 (int)
+\i outputCount
+\i0  
+\b :
+\b0 (char *)
+\i outputData
+\i0 \
+\
+		This is a local method for saving the processed speech data to disk.  Should not be called directly.\
+\
+\
+	
+\b writeProcessedHeader::\
+		- 
+\b0 (BOOL)
+\b writeProcessedHeader:
+\b0  (FILE *)
+\i filePtr
+\i0   
+\b :
+\b0 (int)
+\i numberFrames
+\i0  
+\b :
+\b0 (int)
+\i vectorSize
+\i0 \
+\
+		This is a local method for saving the processed speech data to disk.  Should not be called directly.\
+
+}

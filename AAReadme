@@ -1,0 +1,24 @@
+File: /User/frank/Objc_Classes
+This file contains the descriptions of the directories in /User/frank/Objc_Classes:
+	
+1. DataInput: Object for inputting (speech) data to a neural net.
+
+2. DelayLine: Object which implements a tapped delay line.
+
+3. Filters: Analog, Digital, Gabor, Polynomial objects.
+
+4. HMM: Hidden Markov model objects.
+
+5. Huffman: Object for doing Huffman encoding.
+
+6. IntNN:  Integer and float versions of feature map, neuron objects - most current.
+
+7. MathObject: Just contains RootFinder.
+
+8. MatrixAlgebra: Complex and double precision matrix objects.
+
+9. Probability: Object for generating probability distributions.
+
+10. ProcessedSound: Contains objects for pre-procesing speech.
+
+11. Statistics: Object for accumulating statistics.

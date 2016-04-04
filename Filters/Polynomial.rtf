@@ -1,0 +1,340 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh12580
+\margl120
+\margr0
+\pard\tx3120\tx3620\tx4120\f0\b0\i0\ulnone\fs28\li2620\fc0\cf0 \
+
+\fs16 \
+
+\pard\b\fs36\li1100\fc0\cf0 Polynomial\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	Polynomial.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The Polynomial class allows the manipulation of polynomials.  Methods for performing the operations of multiplying, shifting, evaluating, and finding roots of polynomials exist.  Three polynomials are defined, 
+\i a
+\i0 , 
+\i b
+\i0 , 
+\i c
+\i0 ; where the 
+\i c
+\i0  polynomial is the result of operations on the 
+\i a
+\i0  and 
+\i b
+\i0  polynomials.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in Polynomial
+\i0  	int	aOrder;\
+	int	bOrder;\
+	int	cOrder;\
+	int	aLength;\
+	int	bLength;\
+	int	cLength;\
+	double	*a;\
+	double	*b;\
+	double	*c;\
+	COMPLEX	*aRoots;\
+\
+	\
+aOrder, bOrder, cOrder	orders of the polynomials\
+aLength, bLength, cLength	the lengths of the arrays containing the polynomial coefficients\
+a, b, c	the polynomial coefficients\
+aRoots	the complex roots of the polynomial, a\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Initializing a new instance	
+\f1 - 
+\f0 initWithAPoly:order:\
+	\
+Setting parameters	± setAPoly:order:\
+	± setBPoly:order:\
+\
+Getting parameters	± getAPoly\
+	± getBPoly\
+	± getCPoly\
+	± getAOrder\
+ 	± getBOrder\
+ 	± getCOrder\
+	\
+Operations	± copyCToA\
+	± multABToC\
+	± reverseA\
+	± shiftARightBy:\
+	± evaluateAAtComplexPoint:\
+	± rootsOfA\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b\fs28 \
+copyCToA\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copyCToA\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Copies the 
+\i c
+\i0  polynomial's coefficients to the a polynomial.  This method is useful for saving the result of the 
+\b multABToC
+\b0  operation.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+evaluateAAtComplexPoint:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX)
+\b evaluateAAtComplexPoint:
+\b0 (COMPLEX)
+\i point
+\b\i0 \
+
+\pard\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Evaluates  the 
+\i a
+\i0  polynomial's coefficients at the complex point.  Of course, the imaginary part of the point can be set to zero for evaluating at a real point.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 getAOrder\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b getAOrder
+\b0\i \
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the order of the 
+\i a
+\i0  polynomial.  \
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 getAPoly\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b getAPoly
+\b0\i \
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the coefficients of the 
+\i a
+\i0  polynomial.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 getBOrder\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b getBOrder
+\b0\i \
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the order of the 
+\i b
+\i0  polynomial.  \
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 getBPoly\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b getBPoly
+\b0\i \
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the coefficients of the 
+\i b
+\i0  polynomial.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 getCOrder\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b getCOrder
+\b0\i \
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the order of the 
+\i c
+\i0  polynomial.  \
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 getCPoly\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b getCPoly
+\b0\i \
+
+\pard\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the coefficients of the 
+\i c
+\i0  polynomial.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+initWithAPoly:order:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b initWithAPoly:
+\b0 (double*)
+\i aPoly 
+\b\i0 order:
+\b0 (int)
+\i order\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Initializes the polynomial object by giving the coefficients of the 
+\i a
+\i0  coefficients.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+multABToC\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b multABToC
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Multiplies the polynomial in 
+\i a 
+\i0 by the polynomial in 
+\i b 
+\i0 and stores the result in the polynomial, 
+\i c.
+\i0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+reverseA\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b reverseA\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Reverse the polynomial coefficients in 
+\i a.
+\i0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+rootsOfA:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX *)
+\b rootsOfA\
+
+\pard\tx3120\tx3620\tx4120\fs16\fi-1020\li3620\fc0\cf0 \
+
+\b0\fs28\fi0\li2620 Returns the complex roots of the 
+\i a 
+\i0 polynomial.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setAPoly:order:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setAPoly:
+\b0 (double *)
+\i aPoly 
+\b\i0 order:
+\b0 (int)
+\i n 
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\fs16\fi-1020\li3620\fc0\cf0 \
+
+\b0\fs28\fi0\li2620 Sets the 
+\i a
+\i0  polynomial coefficients to the input array.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setBPoly:order:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setBPoly:
+\b0 (double *)
+\i bPoly 
+\b\i0 order:
+\b0 (int)
+\i n 
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\fs16\fi-1020\li3620\fc0\cf0 \
+
+\b0\fs28\fi0\li2620 Sets the 
+\i b
+\i0  polynomial coefficients to the input array.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+shiftARightBy:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b shiftARightBy:
+\b0 (int)
+\i shift
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\fs16\fi-1020\li3620\fc0\cf0 \
+
+\b0\fs28\fi0\li2620 Shifts the 
+\i a
+\i0  polynomial coefficients to the right, and fills in with zeros.\
+
+}

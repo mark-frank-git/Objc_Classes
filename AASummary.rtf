@@ -1,0 +1,71 @@
+{\rtf0\ansi{\fonttbl\f0\fswiss Helvetica;}
+\paperw12240
+\paperh7740
+\margl120
+\margr120
+\pard\tx367\tx733\tx1601\tx2135\tx2668\tx3202\tx3736\tx4270\tx4803\tx5337\f0\b\i0\ulnone\fs28\fc0\cf0 Classes\
+
+\b0\fs24 \
+
+\b\fs28 A. Signal Processing\
+
+\b0\fs24 	1.	DelayLine: implements a general purpose tapped delay line, for float, int, or char data.\
+	
+2.	
+AnalogFilter: Can be used for analog filter design.  Also is used for designing digital\
+		
+approximations of analog filters.  Types include Butterworth, Chebyshev, Bessel.  Gives\
+		
+characteristics of the designed filters such as magnitude response, phase, phase_delay,\
+		
+poles and zeros, etc.\
+	3.	DigitalFilter: Subclass of AnalogFilter, can design digital approximations of analog filters\
+		as well as design by the window method.  Also provides means for filtering, decimating, etc. of\
+		sampled data.\
+	4.	Polynomial: Mostly used in the above classes for representing the filter coefficients.  Can also\
+		be used to find roots of polynomials and other manipulations of polynomial.\
+	5.	Gabor: Implements the Gabor filter used in image processing.\
+	6.	FFT: Implements some signal processing functions requiring an fft, such as, power spectrum, \
+		cosine transform, periodogram, etc.\
+	7.	Numerical: Implements some numerical algorithms such as zero finding, and numerical integration.\
+	8.	ComplexMatrix and DoubleMatrix: Allows calculations on matrices such as multiplying, finding\
+		determinants, etc.\
+
+\pard\tx360\tx720\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0\cf0 \
+
+\b\fs28 B. Communication Processing\
+
+\b0\fs24 	1.	Huffman: implements the Huffman algorithm for error correcting coding.\
+	2.	Autocorrelation: Returns the sampled autocorrelation function of some signals such as filtered noise,\
+		random bit stream, etc.\
+	3.	Fading: Generates statistics for various fading environments.\
+	4.	Probability: Generates samples from various probability distributions, such as normal, uniform,\
+		log normal, Gauss Markov, Rician, Rayleigh.  Can also return the pdf at a point.\
+	5.	Random: Returns random numbers.  Used in the above.\
+	6.	Statistics: Accumulates data, and returns statistics on that data.\
+
+\pard\tx360\tx720\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0\cf0 \
+
+\b\fs28 C. Speech Processing\
+
+\b0\fs24 	1.	HMM: uses the hidden Markov model for speech recognition.\
+	2.	HMMModel: a speech model used in the HMM object.\
+
+\pard\tx360\tx720\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0\cf0 	3.	SpeechProcessor: Performs various analyses on speech/sounds, such as cepstral, lpc, sonograms,\
+		etc.\
+\
+
+\b\fs28 D. Neural Networks\
+
+\b0\fs24 	1.	Neuron: The base neuron class.\
+	2.	FeatureMap: Implements the Kohonen feature map architecture.\
+	3.	BackPropagation: Implements the backpropagation algorithm on a multi-layer perceptron\
+		architecture.\
+
+\pard\tx360\tx720\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0\cf0 \
+
+\b\fs28 E. Miscellaneous\
+
+\b0\fs24 	1.	SortedList: Subclass of the list object for sorting a list of items.\
+
+}

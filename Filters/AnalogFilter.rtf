@@ -1,0 +1,657 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh11920
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx3120\tx3620\tx4120\f0\b0\i0\ulnone\fs28\li2620\fc0\cf0 \
+
+\fs16 \
+
+\pard\b\fs36\li1100\fc0\cf0 AnalogFilter\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	AnalogFilter.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The AnalogFilter finds analog filters having specified characteristics.  It can then find such things as the magnitude response of the filter.  To do filtering of discrete time signals, see the subclass, DigitalFilter.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in AnalogFilter
+\i0  	id	aPolyObject, bPolyObject;\
+	int	filterPassType;\
+	int	filterStructureType;\
+	int	analogType;\
+	int	responseType;\
+	int	filterOrder;\
+	int	numberPoles;\
+	int	numberZeros;\
+	BOOL	realAxisPoles;\
+	double	fo;\
+	double	fc;\
+	double	thetaOld;\
+	double	subAngle;\
+	double	deltaOmega;\
+	double	passBandGain;\
+	COMPLEX	*analogPoles;\
+	COMPLEX	*analogZeros;\
+\
+	\
+aPolyObject, bPolyObject	denominator/numerator polynomial of filter coefficients\
+filterPassType	low pass, high pass, band pass, or band stop\
+filterStructureType	filter structure: transfer function, pole zero, FIR\
+analogType	Butterworth, Chebyshev, or Bessel\
+responseType	type of response to calculate: magnitude, db, phase, etc.\
+filterOrder	order of the filter, e.g., the number of numerator coefficients\
+numberPoles	number of poles\
+numberZeros	number of zeros\
+realAxisPoles	YES = there are poles on the real axis, used internally\
+fo	center frequency in Hertz\
+fc	cutoff frequency in Hertz\
+thetaOld, subAngle, deltaOmega	used for phase response calculations\
+passBandGain	gain of the filter at the center frequency\
+analogPoles	the poles of the filter\
+analogZeros	the zeros of the filter\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Initializing a new instance	
+\f1 - 
+\f0 init\
+ 	± initWithRealCoeffs:b:order:\
+ 	± initWithPassType:fo:fc:order:\
+ 	± initPolesZeros\
+	\
+Setting parameters	± setPassType:\
+	± setFilterStructureType:\
+	± setAnalogType:\
+	± setResponseType:\
+	± setFilterOrder:\
+	± setFilterFo:fc:\
+	± setFilterACoeff:bCoeff:\
+\
+Getting parameters	± getAnalogPoles\
+	± getAnalogZeros\
+	± getFilterOrder\
+	± getNumberOfPoles\
+ 	± getNumberOfZeros\
+ 	± fo\
+ 	± fc\
+	\
+Converting	± findPolesZeros\
+	± FindAnalogPolesZerosFor:omegaO:bandwidth:\
+	± transferFromPoles:andZeros:\
+	± butterPrototype\
+	± chebyPrototype\
+	± besselPrototype\
+	± lowPassToLowPass:\
+	± lowPassToHighPass:\
+	± lowPassToBandPass:bw:\
+	± lowPassToBandStop:bw:\
+	\
+Filter response	± analogResponseAtFrequencies:numberFreq:\
+	± poleZeroResponseAt:poles:zeros:\
+	± transferResponseAt:\
+	± outputResponseFor:at:\
+\
+Miscellaneous	± functionToFindRoot:\
+ 
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b\fs28 \
+analogResponseAtFrequencies:numberFreq:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0 float *
+\f1 )
+\f0\b analogResponseAtFrequencies:
+\f1\b0 (
+\f0 float *
+\f1 )
+\f0\i frequencies
+\b\i0  numberFreq:
+\f1\b0 (
+\f0 int
+\f1 )
+\f0\i number
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Finds the filter's response at the specified frequencies, which are in radians/second.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 besselPrototype\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b besselPrototype
+\b0\i \
+
+\pard\tx7140\b\i0\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 Finds the Bessel low pass prototype filter.  Local method, should not be called by user.  \
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 butterPrototype\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b butterPrototype
+\b0\i \
+
+\pard\tx7140\b\i0\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 Finds the Butterworth low pass prototype filter.  Local method, should not be called by user.  
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 chebyPrototype\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b chebyPrototype
+\b0\i \
+
+\pard\tx7140\b\i0\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 Finds the Chebyshev low pass prototype filter.  Local method, should not be called by user.  
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 fc\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (double)
+\b fc\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the filter's cutoff frequency.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 findPolesZeros\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b findPolesZeros\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Finds the poles and zeros of the selected filter.  Local method, should not be called by the user.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 findAnalogPolesZerosFor:omegaO:bandwidth:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b findAnalogPolesZerosFor:
+\b0 (double)
+\i wc 
+\b\i0 omegaO:
+\b0 (double)
+\i wo 
+\b\i0 bandwidth:
+\b0 (double)
+\i bw
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Finds the poles and zeros of the selected filter.  Local method to the method above.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 fo\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (double)
+\b fo\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the filter's center frequency.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+functionToFindRoot:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (double)
+\b functionToFindRoot:
+\b0 (double)
+\i x
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by the user.  It is used in finding the Bessel prototype filter.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 getAnalogPoles\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX *)
+\b getAnalogPoles\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the complex poles of the filter.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 getAnalogZeros\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX *)
+\b getAnalogZeros\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the complex zeros of the filter.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 getFilterOrder\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (int)
+\b getFilterOrder\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the order of the filter.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 getNumberOfPoles\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (int)
+\b getNumberOfPoles\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the number of poles in the filter.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 getNumberOfZeros\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (int)
+\b getNumberOfZeros\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns the number of zeros in the filter.
+\b \
+\
+
+\pard\tx7140\li2100\fc0\cf0 init\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b init\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Initializes the object.  Probably should not be called directly, use one of the initialization methods below.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 \
+initWithRealCoeffs:b:order:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b initWithRealCoeffs:
+\b0 (double*)
+\i aCoeff 
+\b\i0 b:
+\b0 (double*)
+\i aCoeff 
+\b\i0 order:
+\b0 (int)
+\i order\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Initializes an analog filter by giving the transfer function coefficients.  The array, 
+\i aCoeff
+\i0 , contains the denominator coefficients, the array,  
+\i bCoeff
+\i0 , contains the numerator coefficients.  For the structure of these arrays, see AnalogFilter.h.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+initWithPassType:fo:fc:order:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b initWithPassType:
+\b0 (int)
+\i type 
+\b\i0 fo:
+\b0 (double)
+\i centerFreq 
+\b\i0 fc:
+\b0 (double)
+\i cutoffFreq 
+\b\i0 order:
+\b0 (int)
+\i order\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Initializes a Butterworth (the default) analog filter by giving its pass band type, its center frequency, its cutoff frequency, and its order.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+initPolesZeros\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b initPolesZeros\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Allocates space for the poles and zeros of the filter.  This is a local method, should not be called by the user.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+lowPassToLowPass:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b lowPassToLowPass:
+\b0 (double)
+\i wc
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by the user.  It does a low pass to low pass transformation.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+lowPassToHighPass:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b lowPassToHighPass:
+\b0 (double)
+\i wc
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by the user.  It does a low pass to high pass transformation.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+lowPassToBandPass:bw:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b lowPassToBandPass:
+\b0 (double)
+\i wo 
+\b\i0 bw:
+\b0 (double)
+\i bw
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by the user.  It does a low pass to band pass transformation.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+lowPassToBandStop:bw:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b lowPassToBandPass:
+\b0 (double)
+\i wo 
+\b\i0 bw:
+\b0 (double)
+\i bw
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, should not be called by the user.  It does a low pass to band stop transformation.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+outputResponseFor: at:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (float)
+\b outputResponseFor:
+\b0 (COMPLEX *)
+\i complexResponse 
+\b\i0 at:
+\b0 (float)
+\i omega
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, used by 
+\b analogResponseAtFrequencies:numberFreq:
+\b0 .  It is used to convert the filter's complex response to the form desired by the user (e.g., phase response).
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+poleZeroResponseAt:poles:zeros:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX)
+\b poleZeroResponseAt:
+\b0 (COMPLEX)
+\i point 
+\b\i0 poles:
+\b0 (COMPLEX *)
+\i poles 
+\b\i0 zeros:
+\b0 (COMPLEX *)
+\i zeros
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, used by 
+\b analogResponseAtFrequencies:numberFreq:
+\b0 .  It is used to find the filter's complex response at a single frequency.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setAnalogType:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setAnalogType:
+\b0 (int)
+\i type
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the instance variable, analogType, to 
+\i type.
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setFilterACoeff:bCoeff:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setFilterACoeff:
+\b0 (double *)
+\i a 
+\b\i0 bCoeff:
+\b0 (double *)
+\i b
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the filter's transfer function coefficients to the input coefficients.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setFilterFo:fc:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setFilterFo:
+\b0 (double)
+\i centerFreq 
+\b\i0 fc:
+\b0 (double)
+\i cutoff
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the filter's center and cutoff frequencies
+\i .
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setFilterOrder:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setFilterOrder:
+\b0 (int)
+\i order
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the filter's order
+\i .
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setFilterStructureType:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setFilterStructureType:
+\b0 (int)
+\i type
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the instance variable, filterStructureType, to 
+\i type.
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setPassType:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setPassType:
+\b0 (int)
+\i type
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the instance variable, filterPassType, to 
+\i type.
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+setResponseType:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b setResponseType:
+\b0 (int)
+\i type
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Sets the instance variable, responseType, to 
+\i type.
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+transferFromPoles:andZeros:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b transferFromPoles:
+\b0 (COMPLEX *)
+\i poles
+\b\i0  andZeros:
+\b0 (COMPLEX *)
+\i zeros
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This method converts poles and zeros to transfer function form.  This is a local method
+\i .
+\pard\tx7140\b\i0\fs16\fi-1020\li3620\fc0\cf0 \
+
+\fs28\fi0\li2100 \
+transferResponseAt:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0 (COMPLEX)
+\b transferResponseAt:
+\b0 (COMPLEX *)
+\i point
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+This is a local method, used by 
+\b analogResponseAtFrequencies:numberFreq:
+\b0 .  It is used to find the filter's complex response from the transfer function form.
+\pard\tx7140\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 \
+\
+
+\pard\tx2600\b0\fi-20\li2100\fc0\cf0 CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\pard\tx5740\f2\fs24\fi-20\li2100\fc0\cf0 	
+\fc1\cf1 \
+#define LOW_PASS	0     /* filterPassType */\
+#define HIGH_PASS	1\
+#define BAND_PASS	2\
+#define BAND_STOP	3\
+\
+#define TRANSFER_FUNCTION	0  /* filterStructureType */\
+#define POLE_ZERO	1\
+#define FIR_WINDOW	2\
+\
+#define BUTTERWORTH	0  /* analogType */\
+#define CHEBYSHEV	1\
+#define BESSEL	2\
+\
+#define MAGNITUDE	0  /* response type */\
+#define DB_MAGNITUDE	1\
+#define PHASE	2\
+#define PHASE_DELAY	3\
+#define GROUP_DELAY	4\
+#define POLE_ZERO_PLOT	5\
+#define SIGNAL_RESPONSE	6\
+#define SIGNAL_FFT	7\
+\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f0\b\fs16\fi-1020\li3620\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 \
+
+}
